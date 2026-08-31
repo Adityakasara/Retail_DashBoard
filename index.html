@@ -3,773 +3,642 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Indian Retail Sales & Profitability Performance Dashboard | Power BI</title>
-  <meta name="description" content="Comprehensive Power BI Retail Sales Performance Dashboard for pan-India retail operations with DAX measures, GST analytics, and regional drilldowns." />
+  <title>India Retail Sales & Profit Performance Dashboard | Power BI</title>
+  <meta name="description" content="Clean, executive Power BI dashboard analyzing Indian retail sales performance, gross profit margins, and regional growth across FY 2023-26." />
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
   
-  <!-- Icons -->
+  <!-- Icons & Chart.js -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="theme-powerbi">
-  <div class="pbi-app-container">
+<body class="theme-dark">
+  <div class="dashboard-wrapper">
     
-    <!-- Top Power BI Ribbon / Action Bar -->
-    <header class="pbi-topbar">
-      <div class="topbar-left">
-        <div class="pbi-logo-box">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand-badge">
           <div class="pbi-bars">
-            <span class="bar b1"></span>
-            <span class="bar b2"></span>
-            <span class="bar b3"></span>
+            <span></span><span></span><span></span>
           </div>
-          <span class="pbi-brand-name">Power BI</span>
+          <strong>Power BI</strong>
         </div>
-        <div class="report-meta-info">
-          <div class="report-main-heading">
-            <h1>India Retail Sales & Profit Performance Report</h1>
-            <span class="report-status-badge"><span class="pulse-dot"></span> LIVE DATASET (INR)</span>
-          </div>
-          <div class="report-breadcrumbs">
-            <span>Workspaces</span> <i data-lucide="chevron-right"></i>
-            <span>Executive Retail Analytics</span> <i data-lucide="chevron-right"></i>
-            <span class="current-report">Pan-India Sales & Profitability (FY 2023-26)</span>
-            <span class="sep">•</span>
-            <span class="data-mode-badge"><i data-lucide="database"></i> DirectQuery (Star Schema)</span>
-          </div>
+        <div class="header-titles">
+          <h1>India Retail Performance Dashboard</h1>
+          <p class="header-subtitle">Executive Intelligence on Sales Revenue, Gross Margins, and Regional Growth (INR ₹)</p>
         </div>
       </div>
 
-      <div class="topbar-right">
-        <button class="pbi-btn" id="btnWhatIf">
+      <div class="header-right">
+        <button class="nav-btn" id="btnWhatIf" title="Simulate price and discount scenarios">
           <i data-lucide="sliders-horizontal"></i>
           <span>Margin Simulator</span>
         </button>
-        <button class="pbi-btn" id="btnDaxExplorer">
+        <button class="nav-btn" id="btnDaxExplorer" title="View DAX measures and data model">
           <i data-lucide="code"></i>
-          <span>DAX Measures & Schema</span>
+          <span>DAX & Model</span>
         </button>
-        <button class="pbi-btn pbi-btn-primary" id="btnExportCsv">
+        <button class="nav-btn primary" id="btnExportCsv" title="Download filtered data in CSV format">
           <i data-lucide="download"></i>
-          <span>Export Excel/CSV</span>
+          <span>Export Data</span>
         </button>
-        <button class="pbi-btn-icon" id="themeToggle" title="Toggle Light/Dark Theme">
-          <i data-lucide="sun" class="sun-icon"></i>
-          <i data-lucide="moon" class="moon-icon"></i>
+        <button class="nav-btn-icon" id="themeToggle" title="Switch between Dark and Light mode">
+          <i data-lucide="sun" class="icon-sun"></i>
+          <i data-lucide="moon" class="icon-moon"></i>
         </button>
-        <a href="https://github.com/Adityakasara/Retail_DashBoard" target="_blank" rel="noopener noreferrer" class="pbi-btn-icon" title="GitHub Repository">
-          <i data-lucide="github"></i>
-        </a>
       </div>
     </header>
 
-    <!-- Interactive Dimensional Slicers Bar -->
-    <section class="slicers-bar">
-      <div class="slicer-section-title">
-        <i data-lucide="filter"></i>
-        <span>FILTERS & SLICERS</span>
-        <button class="btn-clear-all" id="btnResetFilters">
-          <i data-lucide="rotate-ccw"></i> Clear Slicers
+    <!-- Purpose & Context Banner -->
+    <section class="purpose-banner">
+      <div class="purpose-icon">
+        <i data-lucide="info"></i>
+      </div>
+      <div class="purpose-text">
+        <strong>Executive Purpose & Overview:</strong>
+        <span>This dashboard monitors retail sales performance, profitability margins, and customer demand trends across 4 Indian zones (North, South, West, East). Use the filters below to slice data by Financial Year, Region, Category, or Payment Channel.</span>
+      </div>
+    </section>
+
+    <!-- Slicers / Filters Section -->
+    <section class="filter-panel">
+      <div class="filter-panel-header">
+        <div class="filter-heading">
+          <i data-lucide="filter"></i>
+          <span>INTERACTIVE SLICERS</span>
+        </div>
+        <div class="active-filter-summary" id="activeFilterText">
+          Showing: All Financial Years • All India • All Categories • All Channels
+        </div>
+        <button class="reset-filter-btn" id="btnResetFilters">
+          <i data-lucide="rotate-ccw"></i> Reset Filters
         </button>
       </div>
 
-      <div class="slicers-wrapper">
-        <!-- Fiscal Year Slicer -->
-        <div class="slicer-block">
-          <label><i data-lucide="calendar"></i> Financial Year</label>
-          <div class="pbi-pill-group" id="yearPills">
-            <button class="pbi-pill active" data-year="ALL">All FY</button>
-            <button class="pbi-pill" data-year="FY 25-26">FY 25-26</button>
-            <button class="pbi-pill" data-year="FY 24-25">FY 24-25</button>
-            <button class="pbi-pill" data-year="FY 23-24">FY 23-24</button>
+      <div class="slicers-row">
+        <!-- Year -->
+        <div class="slicer-item">
+          <label>Financial Year</label>
+          <div class="pill-group" id="yearPills">
+            <button class="pill active" data-year="ALL">All FY</button>
+            <button class="pill" data-year="FY 25-26">FY 25-26</button>
+            <button class="pill" data-year="FY 24-25">FY 24-25</button>
+            <button class="pill" data-year="FY 23-24">FY 23-24</button>
           </div>
         </div>
 
-        <!-- Zone / Region Slicer -->
-        <div class="slicer-block">
-          <label><i data-lucide="map-pin"></i> Region / Zone</label>
-          <div class="pbi-pill-group" id="regionPills">
-            <button class="pbi-pill active" data-region="ALL">All India</button>
-            <button class="pbi-pill" data-region="North">North Zone</button>
-            <button class="pbi-pill" data-region="South">South Zone</button>
-            <button class="pbi-pill" data-region="West">West Zone</button>
-            <button class="pbi-pill" data-region="East">East Zone</button>
+        <!-- Region -->
+        <div class="slicer-item">
+          <label>Zone / Territory</label>
+          <div class="pill-group" id="regionPills">
+            <button class="pill active" data-region="ALL">All India</button>
+            <button class="pill" data-region="North">North</button>
+            <button class="pill" data-region="South">South</button>
+            <button class="pill" data-region="West">West</button>
+            <button class="pill" data-region="East">East</button>
           </div>
         </div>
 
-        <!-- Product Category Slicer -->
-        <div class="slicer-block">
-          <label><i data-lucide="package"></i> Category</label>
-          <div class="pbi-pill-group" id="categoryPills">
-            <button class="pbi-pill active" data-category="ALL">All Categories</button>
-            <button class="pbi-pill" data-category="Electronics & Appliances">Electronics</button>
-            <button class="pbi-pill" data-category="Home & Living">Home & Living</button>
-            <button class="pbi-pill" data-category="FMCG & Groceries">FMCG & Groceries</button>
-            <button class="pbi-pill" data-category="Fashion & Apparel">Fashion</button>
+        <!-- Category -->
+        <div class="slicer-item">
+          <label>Product Category</label>
+          <div class="pill-group" id="categoryPills">
+            <button class="pill active" data-category="ALL">All Categories</button>
+            <button class="pill" data-category="Electronics & Appliances">Electronics</button>
+            <button class="pill" data-category="Home & Living">Home & Living</button>
+            <button class="pill" data-category="FMCG & Groceries">FMCG</button>
+            <button class="pill" data-category="Fashion & Apparel">Fashion</button>
           </div>
         </div>
 
-        <!-- Payment Mode Slicer -->
-        <div class="slicer-block">
-          <label><i data-lucide="credit-card"></i> Payment Channel</label>
-          <div class="pbi-pill-group" id="paymentPills">
-            <button class="pbi-pill active" data-payment="ALL">All Channels</button>
-            <button class="pbi-pill" data-payment="UPI / QR">UPI (GPay/PhonePe)</button>
-            <button class="pbi-pill" data-payment="Credit / Debit Card">Cards / EMI</button>
-            <button class="pbi-pill" data-payment="Cash on Delivery">Cash on Delivery</button>
-            <button class="pbi-pill" data-payment="Net Banking">Net Banking</button>
+        <!-- Payment -->
+        <div class="slicer-item">
+          <label>Payment Channel</label>
+          <div class="pill-group" id="paymentPills">
+            <button class="pill active" data-payment="ALL">All Channels</button>
+            <button class="pill" data-payment="UPI / QR">UPI</button>
+            <button class="pill" data-payment="Credit / Debit Card">Cards / EMI</button>
+            <button class="pill" data-payment="Cash on Delivery">COD</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Power BI Page Navigation Tabs -->
-    <div class="pbi-page-tabs">
-      <button class="pbi-tab-btn active" data-view="overview"><i data-lucide="layout-dashboard"></i> 1. Executive Summary & KPIs</button>
-      <button class="pbi-tab-btn" data-view="regional"><i data-lucide="map"></i> 2. Regional & City Performance</button>
-      <button class="pbi-tab-btn" data-view="categories"><i data-lucide="bar-chart-2"></i> 3. Product Margin & Category Matrix</button>
-      <button class="pbi-tab-btn" data-view="ledger"><i data-lucide="file-spreadsheet"></i> 4. GST & Orders Ledger</button>
-    </div>
-
-    <!-- Main Canvas View Area -->
-    <main class="pbi-canvas" id="canvasView">
+    <!-- Main Scorecard KPIs (Clean, Big, Readable) -->
+    <section class="kpi-scorecard">
       
-      <!-- Section 1: Executive KPI Cards (DAX Computed) -->
-      <section class="kpi-deck">
-        <!-- KPI 1: Gross Sales Revenue (INR) -->
-        <div class="kpi-tile" data-kpi="sales">
-          <div class="kpi-header">
-            <span class="kpi-label">Gross Sales Revenue</span>
-            <div class="kpi-icon inr-sales-icon">₹</div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value inr-val" id="kpiTotalSales">₹0</div>
-            <div class="kpi-trend positive" id="kpiSalesGrowth">
-              <i data-lucide="arrow-up-right"></i> +16.4% vs SPLY
-            </div>
-          </div>
-          <div class="kpi-footnote">
-            <span>Prior FY: <strong id="kpiSalesPy">₹0</strong></span>
-            <span class="dax-label">DAX: [Total Sales INR]</span>
-          </div>
-          <div class="kpi-bar inr-sales-bar"></div>
+      <!-- KPI 1: Gross Sales -->
+      <div class="kpi-box primary-accent">
+        <div class="kpi-top">
+          <span class="kpi-title">Total Sales Revenue</span>
+          <span class="kpi-badge positive" id="kpiSalesGrowth">+16.4% YoY</span>
         </div>
+        <div class="kpi-value" id="kpiTotalSales">₹0</div>
+        <div class="kpi-bottom">
+          <span>Prior Year: <strong id="kpiSalesPy">₹0</strong></span>
+          <span class="dax-code-tag">SUM(Sales)</span>
+        </div>
+      </div>
 
-        <!-- KPI 2: Net Profit (INR) -->
-        <div class="kpi-tile" data-kpi="profit">
-          <div class="kpi-header">
-            <span class="kpi-label">Net Realized Profit</span>
-            <div class="kpi-icon inr-profit-icon"><i data-lucide="trending-up"></i></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value inr-val text-success" id="kpiTotalProfit">₹0</div>
-            <div class="kpi-trend positive" id="kpiProfitGrowth">
-              <i data-lucide="arrow-up-right"></i> +21.8% YoY
-            </div>
-          </div>
-          <div class="kpi-footnote">
-            <span>Prior FY: <strong id="kpiProfitPy">₹0</strong></span>
-            <span class="dax-label">DAX: [Net Profit INR]</span>
-          </div>
-          <div class="kpi-bar inr-profit-bar"></div>
+      <!-- KPI 2: Net Profit -->
+      <div class="kpi-box success-accent">
+        <div class="kpi-top">
+          <span class="kpi-title">Net Gross Profit</span>
+          <span class="kpi-badge positive" id="kpiProfitGrowth">+21.8% YoY</span>
         </div>
+        <div class="kpi-value text-success" id="kpiTotalProfit">₹0</div>
+        <div class="kpi-bottom">
+          <span>Prior Year: <strong id="kpiProfitPy">₹0</strong></span>
+          <span class="dax-code-tag">SUM(Profit)</span>
+        </div>
+      </div>
 
-        <!-- KPI 3: Profit Margin % -->
-        <div class="kpi-tile" data-kpi="margin">
-          <div class="kpi-header">
-            <span class="kpi-label">Blended Profit Margin</span>
-            <div class="kpi-icon inr-margin-icon"><i data-lucide="percent"></i></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value inr-val" id="kpiProfitMargin">0.0%</div>
-            <div class="kpi-trend positive" id="kpiMarginStatus">
-              <i data-lucide="check-circle-2"></i> Healthy (> 14%)
-            </div>
-          </div>
-          <div class="kpi-footnote">
-            <span>Target Benchmark: <strong>14.5%</strong></span>
-            <span class="dax-label">DIVIDE([Profit], [Sales])</span>
-          </div>
-          <div class="kpi-bar inr-margin-bar"></div>
+      <!-- KPI 3: Profit Margin -->
+      <div class="kpi-box warning-accent">
+        <div class="kpi-top">
+          <span class="kpi-title">Profit Margin %</span>
+          <span class="kpi-badge neutral" id="kpiMarginTarget">Target: 15.0%</span>
         </div>
+        <div class="kpi-value" id="kpiProfitMargin">0.0%</div>
+        <div class="kpi-bottom">
+          <span id="kpiMarginHealth">Healthy performance</span>
+          <span class="dax-code-tag">DIVIDE(Profit, Sales)</span>
+        </div>
+      </div>
 
-        <!-- KPI 4: Total Orders & Volume -->
-        <div class="kpi-tile" data-kpi="orders">
-          <div class="kpi-header">
-            <span class="kpi-label">Total Invoiced Orders</span>
-            <div class="kpi-icon inr-orders-icon"><i data-lucide="shopping-cart"></i></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value inr-val" id="kpiTotalOrders">0</div>
-            <div class="kpi-trend neutral" id="kpiTotalUnits">
-              0 Units Dispatched
-            </div>
-          </div>
-          <div class="kpi-footnote">
-            <span>Fulfillment Rate: <strong>99.1%</strong></span>
-            <span class="dax-label">DISTINCTCOUNT(Order_ID)</span>
-          </div>
-          <div class="kpi-bar inr-orders-bar"></div>
+      <!-- KPI 4: Orders & Volume -->
+      <div class="kpi-box purple-accent">
+        <div class="kpi-top">
+          <span class="kpi-title">Total Orders</span>
+          <span class="kpi-badge neutral" id="kpiAovVal">AOV: ₹0</span>
         </div>
+        <div class="kpi-value" id="kpiTotalOrders">0</div>
+        <div class="kpi-bottom">
+          <span id="kpiTotalUnits">0 Units Dispatched</span>
+          <span class="dax-code-tag">DISTINCTCOUNT(Order_ID)</span>
+        </div>
+      </div>
 
-        <!-- KPI 5: Average Order Value (AOV) -->
-        <div class="kpi-tile" data-kpi="aov">
-          <div class="kpi-header">
-            <span class="kpi-label">Average Order Value (AOV)</span>
-            <div class="kpi-icon inr-aov-icon"><i data-lucide="receipt"></i></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value inr-val" id="kpiAOV">₹0</div>
-            <div class="kpi-trend positive" id="kpiAovGrowth">
-              <i data-lucide="arrow-up-right"></i> +8.2% Basket Size
-            </div>
-          </div>
-          <div class="kpi-footnote">
-            <span>Avg Units / Order: <strong>3.2</strong></span>
-            <span class="dax-label">[Total Sales] / [Orders]</span>
-          </div>
-          <div class="kpi-bar inr-aov-bar"></div>
-        </div>
+    </section>
 
-        <!-- KPI 6: GST Collected & UPI Share -->
-        <div class="kpi-tile" data-kpi="gst">
-          <div class="kpi-header">
-            <span class="kpi-label">Estimated GST Collected</span>
-            <div class="kpi-icon inr-gst-icon"><i data-lucide="landmark"></i></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value inr-val" id="kpiTotalGst">₹0</div>
-            <div class="kpi-trend info" id="kpiUpiShare">
-              UPI Share: 62.4%
-            </div>
-          </div>
-          <div class="kpi-footnote">
-            <span>Blended GST Rate: <strong>14.2%</strong></span>
-            <span class="dax-label">SUM(GST_Tax_Amount)</span>
-          </div>
-          <div class="kpi-bar inr-gst-bar"></div>
-        </div>
-      </section>
+    <!-- Interactive Analytics Workspace (Organized into Clean Tabs) -->
+    <section class="analytics-workspace">
+      
+      <!-- Tab Navigation -->
+      <div class="workspace-tabs">
+        <button class="ws-tab active" data-tab="overview">
+          <i data-lucide="trending-up"></i> 1. Sales & Profit Trends
+        </button>
+        <button class="ws-tab" data-tab="regional">
+          <i data-lucide="map-pin"></i> 2. Regional & City Performance
+        </button>
+        <button class="ws-tab" data-tab="categories">
+          <i data-lucide="layers"></i> 3. Category & Margin Matrix
+        </button>
+        <button class="ws-tab" data-tab="payments">
+          <i data-lucide="wallet"></i> 4. Payment Channels & GST
+        </button>
+      </div>
 
-      <!-- Section 2: Analyst Insights Banner -->
-      <section class="analyst-insights-card">
-        <div class="insights-icon">
-          <i data-lucide="sparkles"></i>
-        </div>
-        <div class="insights-content">
-          <h4>Business Intelligence Summary & Takeaways</h4>
-          <p id="analystNotesText">
-            West Zone (Maharashtra & Gujarat) continues to lead in overall top-line volume with high consumer electronics velocity. 
-            South Zone delivers the highest gross profit margin (19.4%) driven by premium Home & Living sales in Bengaluru and Hyderabad. 
-            UPI payments dominate transactions with zero payment gateway settlement failures.
-          </p>
-        </div>
-      </section>
-
-      <!-- Section 3: Visual Analytics Canvas -->
-      <section class="visuals-canvas-grid">
-        
-        <!-- Visual 1: Sales & Profit Trend (Monthly / Quarterly) -->
-        <div class="pbi-visual-card col-span-2">
-          <div class="visual-header">
-            <div class="visual-title-box">
-              <i data-lucide="line-chart"></i>
+      <!-- Tab Content 1: Trends -->
+      <div class="ws-tab-content active" id="tabContentOverview">
+        <div class="card-grid-split">
+          <div class="chart-card flex-2">
+            <div class="chart-header">
               <div>
-                <h3>Revenue & Gross Profit Performance Trajectory</h3>
-                <span class="visual-subtitle">Dual-axis monthly sales trajectory vs realized gross profit (in ₹ Lakhs)</span>
+                <h3>Revenue & Gross Profit Trajectory Over Time</h3>
+                <p>Track how monthly sales and profit evolve across the selected financial period</p>
+              </div>
+              <div class="granularity-toggle" id="granularityToggle">
+                <button class="gran-btn active" data-gran="month">Monthly</button>
+                <button class="gran-btn" data-gran="quarter">Quarterly</button>
               </div>
             </div>
-            <div class="visual-controls">
-              <div class="pbi-granularity-toggle" id="granularityToggle">
-                <button class="pbi-btn-toggle active" data-gran="month">Monthly</button>
-                <button class="pbi-btn-toggle" data-gran="quarter">Quarterly</button>
-              </div>
+            <div class="chart-container">
+              <canvas id="timelineChart"></canvas>
             </div>
           </div>
-          <div class="visual-body">
-            <canvas id="timelineChart"></canvas>
+
+          <div class="chart-card flex-1">
+            <div class="chart-header">
+              <div>
+                <h3>Category Mix</h3>
+                <p>Contribution share by product category</p>
+              </div>
+            </div>
+            <div class="chart-container doughnut-box">
+              <canvas id="categoryChart"></canvas>
+              <div class="doughnut-center-info">
+                <span class="d-val" id="doughnutCenterVal">₹0</span>
+                <span class="d-sub">Total Sales</span>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Visual 2: Zone & State Performance -->
-        <div class="pbi-visual-card">
-          <div class="visual-header">
-            <div class="visual-title-box">
-              <i data-lucide="map"></i>
+      <!-- Tab Content 2: Regional -->
+      <div class="ws-tab-content" id="tabContentRegional">
+        <div class="card-grid-split">
+          <div class="chart-card flex-1">
+            <div class="chart-header">
               <div>
                 <h3>Zone-wise Sales Contribution</h3>
-                <span class="visual-subtitle">Revenue distribution across North, South, West & East zones</span>
+                <p>Revenue distribution across North, South, West, and East</p>
               </div>
             </div>
+            <div class="chart-container">
+              <canvas id="regionChart"></canvas>
+            </div>
           </div>
-          <div class="visual-body">
-            <canvas id="regionChart"></canvas>
-          </div>
-        </div>
 
-        <!-- Visual 3: Category Revenue & Profit Matrix -->
-        <div class="pbi-visual-card">
-          <div class="visual-header">
-            <div class="visual-title-box">
-              <i data-lucide="pie-chart"></i>
+          <div class="chart-card flex-1">
+            <div class="chart-header">
               <div>
-                <h3>Category Mix (Revenue Share)</h3>
-                <span class="visual-subtitle">Electronics, Home, FMCG & Fashion</span>
+                <h3>Top Metropolitan Cities</h3>
+                <p>Sales volume in leading commercial retail centers</p>
               </div>
             </div>
-            <span class="top-tag" id="topCategoryTag">Top: Electronics</span>
-          </div>
-          <div class="visual-body doughnut-container">
-            <canvas id="categoryChart"></canvas>
-            <div class="doughnut-center-info">
-              <span class="center-val" id="doughnutCenterVal">₹0</span>
-              <span class="center-sub">Total Sales</span>
+            <div class="chart-container">
+              <canvas id="cityChart"></canvas>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Visual 4: Sub-Category Profitability Matrix -->
-        <div class="pbi-visual-card col-span-2">
-          <div class="visual-header">
-            <div class="visual-title-box">
-              <i data-lucide="bar-chart-3"></i>
-              <div>
-                <h3>Sub-Category Sales & Profit Margin Matrix</h3>
-                <span class="visual-subtitle">Evaluating high-margin categories vs volume-driver products</span>
-              </div>
+      <!-- Tab Content 3: Categories & Margins -->
+      <div class="ws-tab-content" id="tabContentCategories">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Sub-Category Sales & Profit Margin Matrix</h3>
+              <p>Green bars represent high-margin product lines (&gt;20%), yellow represents moderate (12-20%), and red indicates low-margin volume drivers (&lt;12%)</p>
             </div>
             <div class="margin-legend">
-              <span class="legend-badge high"><span class="dot"></span> Margin &ge; 20% (High Profit)</span>
-              <span class="legend-badge mid"><span class="dot"></span> Margin 12-20% (Healthy)</span>
-              <span class="legend-badge low"><span class="dot"></span> Margin &lt; 12% (Volume Driver)</span>
+              <span class="leg-item high"><span class="dot"></span> Margin &ge; 20%</span>
+              <span class="leg-item mid"><span class="dot"></span> Margin 12-20%</span>
+              <span class="leg-item low"><span class="dot"></span> Margin &lt; 12%</span>
             </div>
           </div>
-          <div class="visual-body">
+          <div class="chart-container" style="height: 320px;">
             <canvas id="subCategoryChart"></canvas>
           </div>
         </div>
+      </div>
 
-        <!-- Visual 5: Top 6 Metropolitan Cities by Sales -->
-        <div class="pbi-visual-card">
-          <div class="visual-header">
-            <div class="visual-title-box">
-              <i data-lucide="building-2"></i>
+      <!-- Tab Content 4: Payments & GST -->
+      <div class="ws-tab-content" id="tabContentPayments">
+        <div class="card-grid-split">
+          <div class="chart-card flex-1">
+            <div class="chart-header">
               <div>
-                <h3>Top Metro & Tier-1 Cities</h3>
-                <span class="visual-subtitle">Leading sales centers (Mumbai, Bengaluru, Delhi, etc.)</span>
+                <h3>Payment Methods & UPI Adoption</h3>
+                <p>Transaction volume split across payment instruments</p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="paymentChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card flex-1">
+            <div class="chart-header">
+              <div>
+                <h3>GST & Tax Summary</h3>
+                <p>Estimated GST contribution based on applicable HSN slabs</p>
+              </div>
+            </div>
+            <div class="gst-summary-deck">
+              <div class="gst-card">
+                <span class="gst-title">Total GST Collected</span>
+                <span class="gst-val" id="cardTotalGst">₹0</span>
+                <span class="gst-sub">Output Tax Liability</span>
+              </div>
+              <div class="gst-card">
+                <span class="gst-title">UPI Transaction Share</span>
+                <span class="gst-val" id="cardUpiShare">0%</span>
+                <span class="gst-sub">Digital Payments Penetration</span>
+              </div>
+              <div class="gst-card">
+                <span class="gst-title">Average Realized Basket</span>
+                <span class="gst-val" id="cardAov">₹0</span>
+                <span class="gst-sub">Gross Order Value</span>
               </div>
             </div>
           </div>
-          <div class="visual-body">
-            <canvas id="cityChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Transaction Ledger Table Section -->
+    <section class="ledger-section">
+      <div class="ledger-header">
+        <div class="ledger-title-group">
+          <i data-lucide="database"></i>
+          <div>
+            <h3>Structured Order Transactions & Invoices</h3>
+            <p>Filterable retail ledger with GST breakdown and profit status</p>
           </div>
         </div>
 
-        <!-- Visual 6: Payment Channel Distribution -->
-        <div class="pbi-visual-card col-span-2">
-          <div class="visual-header">
-            <div class="visual-title-box">
-              <i data-lucide="wallet"></i>
-              <div>
-                <h3>Payment Methods & UPI Penetration</h3>
-                <span class="visual-subtitle">Transaction volume share: UPI (Google Pay, PhonePe, Paytm) vs Card/EMI vs COD</span>
-              </div>
-            </div>
+        <div class="ledger-actions">
+          <div class="search-wrap">
+            <i data-lucide="search"></i>
+            <input type="text" id="tableSearch" placeholder="Search order ID, customer, city, product..." />
           </div>
-          <div class="visual-body">
-            <canvas id="paymentChart"></canvas>
-          </div>
+          <select id="tableSortSelect" class="clean-select">
+            <option value="date_desc">Sort: Latest First</option>
+            <option value="sales_desc">Sort: Highest Sales (₹)</option>
+            <option value="profit_desc">Sort: Highest Profit (₹)</option>
+            <option value="margin_desc">Sort: Highest Margin %</option>
+          </select>
         </div>
+      </div>
 
-      </section>
+      <div class="table-container">
+        <table class="clean-table" id="transactionTable">
+          <thead>
+            <tr>
+              <th>Invoice ID</th>
+              <th>Date</th>
+              <th>Customer Name</th>
+              <th>Location</th>
+              <th>Zone</th>
+              <th>Category</th>
+              <th>Product Name</th>
+              <th>Sales (₹)</th>
+              <th>GST (₹)</th>
+              <th>Profit (₹)</th>
+              <th>Margin %</th>
+              <th>Payment</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Dynamically injected -->
+          </tbody>
+        </table>
+      </div>
 
-      <!-- Section 4: Detailed Transaction Ledger Table -->
-      <section class="pbi-table-card">
-        <div class="table-card-header">
-          <div class="table-title">
-            <i data-lucide="database"></i>
-            <div>
-              <h3>Retail Order Transactions & GST Invoices</h3>
-              <p>Cleaned transactional data with state GST breakdown, profit margin classification, and payment mode</p>
-            </div>
-          </div>
-          <div class="table-toolbar">
-            <div class="search-box">
-              <i data-lucide="search"></i>
-              <input type="text" id="tableSearch" placeholder="Search Invoice ID, customer, city, product..." />
-            </div>
-            <select id="tableSortSelect" class="pbi-select">
-              <option value="date_desc">Sort: Latest First</option>
-              <option value="sales_desc">Sort: Highest Sales (₹)</option>
-              <option value="profit_desc">Sort: Highest Profit (₹)</option>
-              <option value="margin_desc">Sort: Highest Margin %</option>
-              <option value="margin_asc">Sort: Lowest Margin %</option>
-            </select>
-          </div>
+      <div class="ledger-footer">
+        <div class="ledger-count" id="tableInfo">Showing 1 to 10 of 0 records</div>
+        <div class="pager-controls">
+          <button class="pager-btn" id="btnPrevPage" disabled><i data-lucide="chevron-left"></i> Previous</button>
+          <span class="page-badge" id="pageIndicator">Page 1 / 1</span>
+          <button class="pager-btn" id="btnNextPage">Next <i data-lucide="chevron-right"></i></button>
         </div>
+      </div>
+    </section>
 
-        <div class="table-scroll-container">
-          <table class="pbi-data-table" id="transactionTable">
-            <thead>
-              <tr>
-                <th>Invoice / Order ID</th>
-                <th>Date</th>
-                <th>Customer Name</th>
-                <th>City & State</th>
-                <th>Zone</th>
-                <th>Category</th>
-                <th>Product Description</th>
-                <th>Sales (₹)</th>
-                <th>GST (₹)</th>
-                <th>Profit (₹)</th>
-                <th>Margin %</th>
-                <th>Payment Mode</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <!-- Dynamically rendered -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="table-card-footer">
-          <div class="table-pagination-info" id="tableInfo">Showing 1 to 10 of 0 records</div>
-          <div class="table-pager">
-            <button class="pager-btn" id="btnPrevPage" disabled><i data-lucide="chevron-left"></i> Previous</button>
-            <span class="page-indicator" id="pageIndicator">Page 1 / 1</span>
-            <button class="pager-btn" id="btnNextPage">Next <i data-lucide="chevron-right"></i></button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Modal 1: DAX Measures & Star Schema Architecture -->
+    <!-- Modal 1: DAX Formulas & Star Schema Explorer -->
     <div class="modal-backdrop" id="daxModal">
-      <div class="pbi-dialog-card modal-lg">
-        <div class="dialog-header">
-          <div class="dialog-title-group">
-            <div class="pbi-icon-badge">
-              <i data-lucide="code-2"></i>
-            </div>
+      <div class="modal-window modal-large">
+        <div class="modal-head">
+          <div class="modal-title">
+            <i data-lucide="code-2"></i>
             <div>
-              <h3>DAX Formulas & Star Schema Architecture</h3>
-              <p>Direct inspection of business measures, dimensional relationships, and Power Query ETL steps</p>
+              <h3>DAX Formulas & Data Modeling Architecture</h3>
+              <p>Inspect calculation measures and the underlying Star Schema data model</p>
             </div>
           </div>
-          <button class="dialog-close-btn" id="btnCloseDaxModal">
-            <i data-lucide="x"></i>
-          </button>
+          <button class="modal-close" id="btnCloseDaxModal"><i data-lucide="x"></i></button>
         </div>
 
-        <div class="dialog-tab-bar">
-          <button class="dialog-tab active" data-tab="dax">DAX Measures Library</button>
-          <button class="dialog-tab" data-tab="schema">Star Schema Data Model</button>
-          <button class="dialog-tab" data-tab="etl">Power Query Transformation Pipeline</button>
+        <div class="modal-tab-strip">
+          <button class="m-tab active" data-target="mTabDax">DAX Measures Library</button>
+          <button class="m-tab" data-target="mTabSchema">Star Schema Data Model</button>
+          <button class="m-tab" data-target="mTabEtl">Power Query ETL Pipeline</button>
         </div>
 
-        <div class="dialog-content-body active" id="tabDax">
-          <div class="dax-formula-grid">
-            
-            <div class="dax-box">
-              <div class="dax-box-head">
-                <span class="measure-name">[Total Sales INR]</span>
-                <span class="measure-type">Core Revenue</span>
-              </div>
-              <pre class="dax-code-view"><code>Total Sales INR = 
+        <div class="modal-body-content">
+          <!-- DAX Tab -->
+          <div class="modal-panel active" id="mTabDax">
+            <div class="dax-grid">
+              
+              <div class="dax-card">
+                <div class="dax-head">
+                  <span class="d-name">[Total Sales INR]</span>
+                  <span class="d-tag">Core Financial</span>
+                </div>
+                <pre><code>Total Sales INR = 
 SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )</code></pre>
-              <p class="measure-explanation">Calculates the total gross invoiced revenue in Indian Rupees across all filtered dimensions.</p>
-            </div>
-
-            <div class="dax-box">
-              <div class="dax-box-head">
-                <span class="measure-name">[Net Realized Profit]</span>
-                <span class="measure-type">Profitability</span>
+                <p>Aggregates top-line gross invoiced sales revenue in Indian Rupees across the active filter context.</p>
               </div>
-              <pre class="dax-code-view"><code>Net Realized Profit = 
+
+              <div class="dax-card">
+                <div class="dax-head">
+                  <span class="d-name">[Net Realized Profit]</span>
+                  <span class="d-tag">Profitability</span>
+                </div>
+                <pre><code>Net Realized Profit = 
 SUM ( 'Fact_Retail_Orders'[Net_Profit_Amount] )</code></pre>
-              <p class="measure-explanation">Computes realized net margin after deducting wholesale procurement cost, logistics, and promotional discounts.</p>
-            </div>
-
-            <div class="dax-box">
-              <div class="dax-box-head">
-                <span class="measure-name">[Blended Profit Margin %]</span>
-                <span class="measure-type">Efficiency</span>
+                <p>Calculates realized profit after deducting wholesale procurement cost, logistics, and discounts.</p>
               </div>
-              <pre class="dax-code-view"><code>Blended Profit Margin % = 
+
+              <div class="dax-card">
+                <div class="dax-head">
+                  <span class="d-name">[Blended Profit Margin %]</span>
+                  <span class="d-tag">Efficiency</span>
+                </div>
+                <pre><code>Blended Profit Margin % = 
 DIVIDE ( 
     [Net Realized Profit], 
     [Total Sales INR], 
     0 
 )</code></pre>
-              <p class="measure-explanation">Handles divide-by-zero safely to return exact percentage margin across categories and zones.</p>
-            </div>
-
-            <div class="dax-box">
-              <div class="dax-box-head">
-                <span class="measure-name">[Sales SPLY (Prior Year)]</span>
-                <span class="measure-type">Time Intelligence</span>
+                <p>Safe division protecting against zero-sales scenarios, calculating accurate profit margin percentage.</p>
               </div>
-              <pre class="dax-code-view"><code>Sales SPLY = 
+
+              <div class="dax-card">
+                <div class="dax-head">
+                  <span class="d-name">[Sales SPLY (Prior Year)]</span>
+                  <span class="d-tag">Time Intelligence</span>
+                </div>
+                <pre><code>Sales SPLY = 
 CALCULATE (
     [Total Sales INR],
-    SAMEPERIODLASTYEAR ( 'Dim_Calendar'[Date] )
+    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] )
 )</code></pre>
-              <p class="measure-explanation">Evaluates sales for the identical calendar window in the prior financial year for accurate YoY benchmarking.</p>
-            </div>
-
-            <div class="dax-box">
-              <div class="dax-box-head">
-                <span class="measure-name">[YoY Sales Growth %]</span>
-                <span class="measure-type">Time Intelligence</span>
+                <p>Shifts fiscal calendar context by 1 full year to establish comparative prior year benchmark.</p>
               </div>
-              <pre class="dax-code-view"><code>YoY Sales Growth % = 
-VAR CurrentSales = [Total Sales INR]
-VAR PriorYearSales = [Sales SPLY]
-RETURN
-    DIVIDE ( CurrentSales - PriorYearSales, PriorYearSales, 0 )</code></pre>
-              <p class="measure-explanation">Computes year-over-year revenue expansion percentage.</p>
-            </div>
 
-            <div class="dax-box">
-              <div class="dax-box-head">
-                <span class="measure-name">[GST Collected INR]</span>
-                <span class="measure-type">Tax Compliance</span>
-              </div>
-              <pre class="dax-code-view"><code>GST Collected INR = 
-SUM ( 'Fact_Retail_Orders'[GST_Amount] )</code></pre>
-              <p class="measure-explanation">Aggregates output GST liability (CGST + SGST / IGST) based on product HSN classification.</p>
             </div>
-
           </div>
-        </div>
 
-        <div class="dialog-content-body" id="tabSchema">
-          <div class="schema-layout-container">
-            <div class="star-schema-diagram">
-              <!-- Central Fact Table -->
-              <div class="schema-node fact-node">
-                <div class="node-header fact-head">
-                  <i data-lucide="database"></i>
-                  <span>Fact_Retail_Orders</span>
-                  <span class="badge-fact-tag">FACT</span>
+          <!-- Schema Tab -->
+          <div class="modal-panel" id="mTabSchema">
+            <div class="schema-layout">
+              <div class="schema-box central-fact">
+                <div class="schema-box-header fact-color">
+                  <i data-lucide="database"></i> Fact_Retail_Orders
                 </div>
-                <div class="node-columns">
-                  <div class="col-line pk"><i data-lucide="key"></i> Invoice_ID (PK)</div>
-                  <div class="col-line fk"><i data-lucide="link-2"></i> Customer_Key (FK)</div>
-                  <div class="col-line fk"><i data-lucide="link-2"></i> Product_Key (FK)</div>
-                  <div class="col-line fk"><i data-lucide="link-2"></i> City_Key (FK)</div>
-                  <div class="col-line fk"><i data-lucide="link-2"></i> Date_Key (FK)</div>
-                  <div class="col-line val"><i data-lucide="indian-rupee"></i> Gross_Sales_Amount</div>
-                  <div class="col-line val"><i data-lucide="percent"></i> Discount_Rate</div>
-                  <div class="col-line val"><i data-lucide="receipt"></i> GST_Amount</div>
-                  <div class="col-line val"><i data-lucide="trending-up"></i> Net_Profit_Amount</div>
-                  <div class="col-line text"><i data-lucide="credit-card"></i> Payment_Mode</div>
+                <div class="schema-box-body">
+                  <div><span class="key-pk">PK</span> Invoice_ID</div>
+                  <div><span class="key-fk">FK</span> Customer_Key</div>
+                  <div><span class="key-fk">FK</span> Product_Key</div>
+                  <div><span class="key-fk">FK</span> City_Key</div>
+                  <div><span class="key-fk">FK</span> Date_Key</div>
+                  <div><span class="key-val">#</span> Gross_Sales_Amount</div>
+                  <div><span class="key-val">#</span> GST_Amount</div>
+                  <div><span class="key-val">#</span> Net_Profit_Amount</div>
                 </div>
               </div>
 
-              <!-- Dimension Tables -->
-              <div class="dim-nodes-cluster">
-                <div class="schema-node dim-node">
-                  <div class="node-header dim-head">
-                    <i data-lucide="users"></i>
-                    <span>Dim_Customer</span>
-                    <span class="badge-dim-tag">1:*</span>
-                  </div>
-                  <div class="node-columns">
-                    <div class="col-line pk"><i data-lucide="key"></i> Customer_Key (PK)</div>
-                    <div class="col-line">Customer_Name</div>
-                    <div class="col-line">Customer_Type</div>
-                    <div class="col-line">Loyalty_Tier</div>
+              <div class="dim-boxes-grid">
+                <div class="schema-box">
+                  <div class="schema-box-header"><i data-lucide="users"></i> Dim_Customer</div>
+                  <div class="schema-box-body">
+                    <div><span class="key-pk">PK</span> Customer_Key</div>
+                    <div>Customer_Name</div>
+                    <div>Customer_Type</div>
                   </div>
                 </div>
 
-                <div class="schema-node dim-node">
-                  <div class="node-header dim-head">
-                    <i data-lucide="box"></i>
-                    <span>Dim_Product</span>
-                    <span class="badge-dim-tag">1:*</span>
-                  </div>
-                  <div class="node-columns">
-                    <div class="col-line pk"><i data-lucide="key"></i> Product_Key (PK)</div>
-                    <div class="col-line">Category</div>
-                    <div class="col-line">Sub_Category</div>
-                    <div class="col-line">Product_Brand</div>
-                    <div class="col-line">HSN_Code & GST%</div>
+                <div class="schema-box">
+                  <div class="schema-box-header"><i data-lucide="package"></i> Dim_Product</div>
+                  <div class="schema-box-body">
+                    <div><span class="key-pk">PK</span> Product_Key</div>
+                    <div>Category & Sub_Category</div>
+                    <div>HSN_Code & GST_Rate</div>
                   </div>
                 </div>
 
-                <div class="schema-node dim-node">
-                  <div class="node-header dim-head">
-                    <i data-lucide="map-pin"></i>
-                    <span>Dim_Geography</span>
-                    <span class="badge-dim-tag">1:*</span>
-                  </div>
-                  <div class="node-columns">
-                    <div class="col-line pk"><i data-lucide="key"></i> City_Key (PK)</div>
-                    <div class="col-line">City_Name</div>
-                    <div class="col-line">State</div>
-                    <div class="col-line">Zone (North/South/West/East)</div>
-                    <div class="col-line">Tier (Metro / Tier-1 / Tier-2)</div>
+                <div class="schema-box">
+                  <div class="schema-box-header"><i data-lucide="map-pin"></i> Dim_Geography</div>
+                  <div class="schema-box-body">
+                    <div><span class="key-pk">PK</span> City_Key</div>
+                    <div>City, State, Zone</div>
+                    <div>Tier (Metro / Tier-1)</div>
                   </div>
                 </div>
 
-                <div class="schema-node dim-node">
-                  <div class="node-header dim-head">
-                    <i data-lucide="calendar"></i>
-                    <span>Dim_Fiscal_Calendar</span>
-                    <span class="badge-dim-tag">1:*</span>
-                  </div>
-                  <div class="node-columns">
-                    <div class="col-line pk"><i data-lucide="key"></i> Date_Key (PK)</div>
-                    <div class="col-line">Full_Date</div>
-                    <div class="col-line">Financial_Year (FY)</div>
-                    <div class="col-line">Fiscal_Quarter (Q1-Q4)</div>
-                    <div class="col-line">Month_Name</div>
+                <div class="schema-box">
+                  <div class="schema-box-header"><i data-lucide="calendar"></i> Dim_Fiscal_Calendar</div>
+                  <div class="schema-box-body">
+                    <div><span class="key-pk">PK</span> Date_Key</div>
+                    <div>Financial_Year (FY)</div>
+                    <div>Fiscal_Quarter (Q1-Q4)</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="dialog-content-body" id="tabEtl">
-          <div class="etl-pipeline-steps">
-            <div class="pipeline-step">
-              <span class="step-num">Step 1</span>
-              <h4>Data Extraction & Encoding</h4>
-              <p>Extracted raw sales transactions from Point of Sale (POS) and e-commerce databases. Applied UTF-8 encoding with rupee currency normalization.</p>
-            </div>
-            <div class="pipeline-step">
-              <span class="step-num">Step 2</span>
-              <h4>Data Cleaning & Deduplication</h4>
-              <p>Removed cancelled orders, formatted Indian dates (DD-MM-YYYY), and converted negative profit outliers into standard audit flags.</p>
-            </div>
-            <div class="pipeline-step">
-              <span class="step-num">Step 3</span>
-              <h4>Data Privacy & Masking</h4>
-              <p>Masked customer mobile numbers and PII using SHA-256 hashing to ensure data compliance and privacy best practices.</p>
-            </div>
-            <div class="pipeline-step">
-              <span class="step-num">Step 4</span>
-              <h4>Star Schema & Fiscal Hierarchy</h4>
-              <p>Constructed an Indian financial calendar hierarchy (April to March fiscal year) linked to 1 Fact and 4 Dimension tables for ultra-fast query execution.</p>
+          <!-- ETL Tab -->
+          <div class="modal-panel" id="mTabEtl">
+            <div class="etl-steps-list">
+              <div class="etl-card">
+                <span class="step-badge">Step 1</span>
+                <h4>Data Ingestion & Encoding</h4>
+                <p>Connected to enterprise Point-of-Sale (POS) extracts. Normalized INR currencies and standard ISO dates.</p>
+              </div>
+              <div class="etl-card">
+                <span class="step-badge">Step 2</span>
+                <h4>Deduplication & Data Cleansing</h4>
+                <p>Removed cancelled orders and null values, standardizing state and city naming conventions.</p>
+              </div>
+              <div class="etl-card">
+                <span class="step-badge">Step 3</span>
+                <h4>Data Privacy & Anonymization</h4>
+                <p>Hashed customer PII (phone/email) using SHA-256 for compliance while retaining demographic segmentation.</p>
+              </div>
+              <div class="etl-card">
+                <span class="step-badge">Step 4</span>
+                <h4>Star Schema Transformation</h4>
+                <p>Engineered 1 Fact table linked to 4 Dimension tables for ultra-fast in-memory analytical querying.</p>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
     <!-- Modal 2: What-If Profitability Simulator -->
     <div class="modal-backdrop" id="whatIfModal">
-      <div class="pbi-dialog-card modal-md">
-        <div class="dialog-header">
-          <div class="dialog-title-group">
-            <div class="pbi-icon-badge simulator-badge">
-              <i data-lucide="sliders-horizontal"></i>
-            </div>
+      <div class="modal-window modal-medium">
+        <div class="modal-head">
+          <div class="modal-title">
+            <i data-lucide="sliders-horizontal"></i>
             <div>
               <h3>What-If Profitability Simulator</h3>
-              <p>Simulate pricing, discount policy adjustments, and sales volume changes</p>
+              <p>Simulate pricing, discount changes, and sales volume growth on bottom-line profit</p>
             </div>
           </div>
-          <button class="dialog-close-btn" id="btnCloseWhatIfModal">
-            <i data-lucide="x"></i>
-          </button>
+          <button class="modal-close" id="btnCloseWhatIfModal"><i data-lucide="x"></i></button>
         </div>
 
-        <div class="dialog-inner-padding">
-          
-          <div class="slider-control-stack">
+        <div class="modal-body-content">
+          <div class="slider-stack">
             
-            <div class="slider-item">
-              <div class="slider-label-row">
+            <div class="slider-row">
+              <div class="slider-labels">
                 <span>Average Selling Price (ASP) Adjustment</span>
-                <span class="slider-current-val" id="valPriceDelta">+0%</span>
+                <strong id="valPriceDelta">+0%</strong>
               </div>
               <input type="range" id="sliderPrice" min="-15" max="25" value="0" step="1" />
-              <div class="slider-extremes">
-                <span>-15%</span>
-                <span>0% (Base)</span>
-                <span>+25%</span>
-              </div>
+              <div class="slider-bounds"><span>-15%</span><span>0% (Base)</span><span>+25%</span></div>
             </div>
 
-            <div class="slider-item">
-              <div class="slider-label-row">
+            <div class="slider-row">
+              <div class="slider-labels">
                 <span>Discount Optimization Delta</span>
-                <span class="slider-current-val" id="valDiscountDelta">0%</span>
+                <strong id="valDiscountDelta">0%</strong>
               </div>
               <input type="range" id="sliderDiscount" min="-10" max="15" value="0" step="1" />
-              <div class="slider-extremes">
-                <span>-10% (Tighter)</span>
-                <span>0% (Current)</span>
-                <span>+15% (Aggressive)</span>
-              </div>
+              <div class="slider-bounds"><span>-10% (Strict)</span><span>0% (Current)</span><span>+15% (Aggressive)</span></div>
             </div>
 
-            <div class="slider-item">
-              <div class="slider-label-row">
-                <span>Unit Sales Volume Elasticity</span>
-                <span class="slider-current-val" id="valVolumeDelta">+0%</span>
+            <div class="slider-row">
+              <div class="slider-labels">
+                <span>Unit Sales Volume Growth</span>
+                <strong id="valVolumeDelta">+0%</strong>
               </div>
               <input type="range" id="sliderVolume" min="-20" max="40" value="0" step="5" />
-              <div class="slider-extremes">
-                <span>-20%</span>
-                <span>0%</span>
-                <span>+40%</span>
-              </div>
+              <div class="slider-bounds"><span>-20%</span><span>0%</span><span>+40%</span></div>
             </div>
 
           </div>
 
-          <div class="simulation-output-grid">
-            <div class="sim-stat-box">
-              <span class="stat-title">Projected Revenue (INR)</span>
-              <span class="stat-value" id="simSales">₹0</span>
-              <span class="stat-delta positive" id="simSalesDelta">+₹0 (+0.0%)</span>
+          <div class="sim-results-grid">
+            <div class="sim-result-box">
+              <span class="sim-label">Projected Sales</span>
+              <span class="sim-num" id="simSales">₹0</span>
+              <span class="sim-delta positive" id="simSalesDelta">+₹0</span>
             </div>
-
-            <div class="sim-stat-box">
-              <span class="stat-title">Projected Profit (INR)</span>
-              <span class="stat-value" id="simProfit">₹0</span>
-              <span class="stat-delta positive" id="simProfitDelta">+₹0 (+0.0%)</span>
+            <div class="sim-result-box">
+              <span class="sim-label">Projected Gross Profit</span>
+              <span class="sim-num" id="simProfit">₹0</span>
+              <span class="sim-delta positive" id="simProfitDelta">+₹0</span>
             </div>
-
-            <div class="sim-stat-box">
-              <span class="stat-title">Simulated Margin %</span>
-              <span class="stat-value" id="simMargin">0.0%</span>
-              <span class="stat-delta neutral" id="simMarginDelta">0.0% vs Base</span>
+            <div class="sim-result-box">
+              <span class="sim-label">Projected Margin %</span>
+              <span class="sim-num" id="simMargin">0.0%</span>
+              <span class="sim-delta neutral" id="simMarginDelta">0.0% vs Base</span>
             </div>
           </div>
 
-          <div class="dialog-actions-row">
-            <button class="pbi-btn" id="btnResetSimulation">Reset to Baseline</button>
-            <button class="pbi-btn pbi-btn-primary" id="btnApplySimulation">Apply to Active View</button>
+          <div class="modal-footer-btns">
+            <button class="nav-btn" id="btnResetSimulation">Reset</button>
+            <button class="nav-btn primary" id="btnApplySimulation">Apply Simulation</button>
           </div>
-
         </div>
       </div>
     </div>
 
-    <!-- Power BI Status Footer -->
-    <footer class="pbi-footer">
-      <div class="footer-status">
-        <span class="dot-online"></span>
-        <span>Connected: Pan-India Enterprise Semantic Model (INR)</span>
-        <span class="sep">•</span>
-        <span>Currency: Indian Rupee (₹) • Lakhs (L) / Crores (Cr) Formatting</span>
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span class="live-dot"></span>
+        <span>India Retail Analytics Model (INR ₹) • Power BI Semantic Architecture</span>
       </div>
-      <div class="footer-links">
+      <div class="footer-right">
         <a href="https://github.com/Adityakasara/Retail_DashBoard" target="_blank" rel="noopener noreferrer">
           <i data-lucide="github"></i> Aditya Kasara | Retail_DashBoard
         </a>
