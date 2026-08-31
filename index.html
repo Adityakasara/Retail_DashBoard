@@ -3,648 +3,985 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>India Retail Sales & Profit Performance Dashboard | Power BI</title>
-  <meta name="description" content="Clean, executive Power BI dashboard analyzing Indian retail sales performance, gross profit margins, and regional growth across FY 2023-26." />
+  <title>Microsoft Power BI - Retail Sales Performance Report (INR ₹)</title>
+  <meta name="description" content="Official Power BI interactive report analyzing pan-India retail sales performance, gross profit margins, and DAX measures across FY 2023-26." />
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   
   <!-- Icons & Chart.js -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ==========================================================================
+       Microsoft Power BI Desktop / Service Interface Theme
+       ========================================================================== */
+    :root {
+      --pbi-yellow: #f2c811;
+      --pbi-gold: #d9a404;
+      --pbi-header-bg: #11151c;
+      --pbi-ribbon-bg: #1b222d;
+      --pbi-canvas-bg: #0b0e14;
+      --pbi-card-bg: #151c27;
+      --pbi-card-border: #222d3d;
+      --pbi-sidebar-bg: #111722;
+      --pbi-text: #ffffff;
+      --pbi-text-sub: #94a3b8;
+      --pbi-text-muted: #64748b;
+      --pbi-blue: #38bdf8;
+      --pbi-green: #10b981;
+      --pbi-amber: #f59e0b;
+      --pbi-red: #ef4444;
+      --pbi-purple: #a855f7;
+      --font-pbi: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-pbi);
+      background-color: var(--pbi-canvas-bg);
+      color: var(--pbi-text);
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Top Microsoft Power BI App Bar */
+    .pbi-app-bar {
+      background: var(--pbi-header-bg);
+      border-bottom: 1px solid var(--pbi-card-border);
+      padding: 0.5rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 48px;
+    }
+
+    .pbi-app-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pbi-logo {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 18px;
+      background: #000;
+      padding: 3px 5px;
+      border-radius: 3px;
+      border: 1px solid rgba(242, 200, 17, 0.4);
+    }
+    .pbi-logo span { width: 3.5px; background: var(--pbi-yellow); border-radius: 1px; }
+    .pbi-logo span:nth-child(1) { height: 6px; }
+    .pbi-logo span:nth-child(2) { height: 11px; }
+    .pbi-logo span:nth-child(3) { height: 16px; }
+
+    .pbi-title-group h1 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pbi-status-pill {
+      font-size: 0.68rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--pbi-green);
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .pbi-app-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pbi-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--pbi-card-bg);
+      border: 1px solid var(--pbi-card-border);
+      color: #fff;
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .pbi-action-btn:hover { background: #1e2838; border-color: #334155; }
+    .pbi-action-btn.gold { background: var(--pbi-yellow); color: #000; font-weight: 700; border: none; }
+    .pbi-action-btn.gold:hover { background: #e0b605; }
+    .pbi-action-btn i { width: 13px; height: 13px; }
+
+    /* Power BI Ribbon / Formula Bar */
+    .pbi-formula-bar {
+      background: var(--pbi-ribbon-bg);
+      border-bottom: 1px solid var(--pbi-card-border);
+      padding: 0.35rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.76rem;
+    }
+    .dax-fx-badge {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--pbi-yellow);
+      background: #0a0e14;
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+    }
+    .dax-measure-code {
+      font-family: var(--font-mono);
+      color: var(--pbi-text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+    .dax-measure-code strong { color: var(--pbi-blue); }
+
+    /* Main Power BI Report Container */
+    .pbi-main-layout {
+      display: flex;
+      min-height: calc(100vh - 84px);
+    }
+
+    /* Left Slicers & Filters Pane */
+    .pbi-filter-pane {
+      width: 260px;
+      background: var(--pbi-sidebar-bg);
+      border-right: 1px solid var(--pbi-card-border);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .pane-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--pbi-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--pbi-card-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .btn-reset-filters {
+      background: none;
+      border: none;
+      color: var(--pbi-blue);
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-reset-filters:hover { text-decoration: underline; }
+
+    .slicer-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .slicer-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--pbi-text-sub);
+      text-transform: uppercase;
+    }
+
+    .pbi-slicer-pill {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .s-btn {
+      background: var(--pbi-card-bg);
+      border: 1px solid var(--pbi-card-border);
+      color: var(--pbi-text-sub);
+      padding: 0.35rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .s-btn:hover { background: #1c2635; color: #fff; }
+    .s-btn.active {
+      background: rgba(242, 200, 17, 0.15);
+      border-color: var(--pbi-yellow);
+      color: var(--pbi-yellow);
+      font-weight: 700;
+    }
+    .s-btn.active::after {
+      content: '✓';
+      font-weight: 800;
+    }
+
+    .dataset-info-box {
+      margin-top: auto;
+      background: #0a0e14;
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 4px;
+      padding: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--pbi-text-muted);
+      line-height: 1.35;
+    }
+    .dataset-info-box strong { color: var(--pbi-text-sub); }
+
+    /* Canvas Area */
+    .pbi-report-canvas {
+      flex: 1;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+
+    /* Purpose Header Banner on Canvas */
+    .canvas-title-banner {
+      background: linear-gradient(90deg, #151c27, #111620);
+      border: 1px solid var(--pbi-card-border);
+      border-left: 4px solid var(--pbi-yellow);
+      border-radius: 6px;
+      padding: 0.85rem 1.15rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .canvas-title-banner h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .canvas-title-banner p {
+      font-size: 0.76rem;
+      color: var(--pbi-text-sub);
+    }
+    .active-breadcrumbs {
+      font-size: 0.74rem;
+      background: #090d14;
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+      border: 1px solid var(--pbi-card-border);
+      color: var(--pbi-blue);
+      font-weight: 600;
+    }
+
+    /* KPI Cards Grid */
+    .pbi-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .pbi-kpi-card {
+      background: var(--pbi-card-bg);
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 6px;
+      padding: 1rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .pbi-kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .kpi-c1::before { background: var(--pbi-blue); }
+    .kpi-c2::before { background: var(--pbi-green); }
+    .kpi-c3::before { background: var(--pbi-amber); }
+    .kpi-c4::before { background: var(--pbi-purple); }
+
+    .kpi-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--pbi-text-sub);
+      font-weight: 600;
+    }
+    .kpi-growth-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+    }
+    .kpi-growth-badge.pos { background: rgba(16, 185, 129, 0.15); color: var(--pbi-green); }
+    .kpi-growth-badge.neu { background: #0c1017; color: var(--pbi-text-sub); }
+
+    .kpi-big-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .kpi-big-value.green { color: var(--pbi-green); }
+
+    .kpi-footer-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--pbi-text-muted);
+    }
+    .kpi-footer-row strong { color: var(--pbi-text-sub); }
+
+    /* Visuals Grid */
+    .pbi-visuals-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+    }
+    .pbi-visuals-row.equal {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .pbi-chart-card {
+      background: var(--pbi-card-bg);
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 6px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .chart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chart-head h3 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .chart-head p {
+      font-size: 0.7rem;
+      color: var(--pbi-text-sub);
+    }
+
+    .chart-box {
+      height: 250px;
+      position: relative;
+      width: 100%;
+    }
+
+    .doughnut-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .doughnut-center {
+      position: absolute;
+      text-align: center;
+      pointer-events: none;
+    }
+    .doughnut-center .val { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .doughnut-center .lbl { font-size: 0.65rem; color: var(--pbi-text-sub); text-transform: uppercase; }
+
+    /* Matrix / Data Table */
+    .pbi-matrix-card {
+      background: var(--pbi-card-bg);
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 6px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .matrix-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .search-input-field {
+      background: #0a0e14;
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 4px;
+      padding: 0.35rem 0.65rem;
+      color: #fff;
+      font-size: 0.75rem;
+      width: 240px;
+      outline: none;
+    }
+    .search-input-field:focus { border-color: var(--pbi-blue); }
+
+    .matrix-table-wrap {
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .pbi-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.76rem;
+      text-align: left;
+    }
+    .pbi-table th {
+      background: #0d121a;
+      padding: 0.55rem 0.7rem;
+      font-weight: 600;
+      color: var(--pbi-text-sub);
+      border-bottom: 1px solid var(--pbi-card-border);
+      white-space: nowrap;
+    }
+    .pbi-table td {
+      padding: 0.5rem 0.7rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: #fff;
+      white-space: nowrap;
+    }
+    .pbi-table tbody tr:hover { background: #192230; }
+
+    .pbi-tag {
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .pbi-tag.green { background: rgba(16, 185, 129, 0.15); color: var(--pbi-green); }
+    .pbi-tag.yellow { background: rgba(245, 158, 11, 0.15); color: var(--pbi-amber); }
+    .pbi-tag.red { background: rgba(239, 68, 68, 0.15); color: var(--pbi-red); }
+
+    .matrix-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--pbi-text-sub);
+    }
+    .pager-box {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .p-btn {
+      background: #0a0e14;
+      border: 1px solid var(--pbi-card-border);
+      color: #fff;
+      padding: 0.25rem 0.55rem;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .p-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Power BI Bottom Page Tabs */
+    .pbi-bottom-bar {
+      background: var(--pbi-header-bg);
+      border-top: 1px solid var(--pbi-card-border);
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      height: 36px;
+      gap: 0.25rem;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+    }
+    .pbi-page-tab {
+      background: transparent;
+      border: none;
+      border-top: 2px solid transparent;
+      color: var(--pbi-text-sub);
+      padding: 0 0.85rem;
+      height: 36px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .pbi-page-tab:hover { color: #fff; background: rgba(255,255,255,0.03); }
+    .pbi-page-tab.active {
+      color: var(--pbi-yellow);
+      border-top-color: var(--pbi-yellow);
+      background: var(--pbi-canvas-bg);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1.5rem;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-body-pbi {
+      background: var(--pbi-card-bg);
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 6px;
+      width: 100%;
+      max-width: 820px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    .modal-header-pbi {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1.15rem;
+      border-bottom: 1px solid var(--pbi-card-border);
+      background: var(--pbi-header-bg);
+    }
+    .modal-header-pbi h3 { font-size: 0.95rem; color: #fff; }
+    .modal-close-btn { background: none; border: none; color: var(--pbi-text-sub); cursor: pointer; }
+    .modal-close-btn:hover { color: #fff; }
+
+    .modal-content-pbi {
+      padding: 1.15rem;
+      overflow-y: auto;
+      font-size: 0.78rem;
+    }
+
+    .dax-grid-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+    .dax-item-card {
+      background: #0d121a;
+      border: 1px solid var(--pbi-card-border);
+      border-radius: 4px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .dax-item-card h4 { color: var(--pbi-blue); font-family: var(--font-mono); font-size: 0.8rem; }
+    .dax-item-card pre {
+      background: #05080c;
+      padding: 0.5rem;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+    .dax-item-card p { color: var(--pbi-text-sub); font-size: 0.72rem; }
+
+    /* Responsive */
+    @media (max-width: 1050px) {
+      .pbi-main-layout { flex-direction: column; }
+      .pbi-filter-pane { width: 100%; border-right: none; border-bottom: 1px solid var(--pbi-card-border); }
+      .pbi-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .pbi-visuals-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .pbi-kpi-grid { grid-template-columns: 1fr; }
+      .dax-grid-view { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="theme-dark">
-  <div class="dashboard-wrapper">
+<body>
+
+  <!-- 1. Top Power BI App Bar -->
+  <header class="pbi-app-bar">
+    <div class="pbi-app-brand">
+      <div class="pbi-logo">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="pbi-title-group">
+        <h1>
+          Retail Sales Performance Dashboard.pbix
+          <span class="pbi-status-badge">DirectQuery • Live</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="pbi-app-actions">
+      <button class="pbi-action-btn" id="btnDaxModal"><i data-lucide="code-2"></i> DAX Measures (6)</button>
+      <button class="pbi-action-btn" id="btnWhatIfModal"><i data-lucide="sliders"></i> Margin What-If</button>
+      <button class="pbi-action-btn gold" id="btnExportData"><i data-lucide="download"></i> Export Data (CSV)</button>
+      <a href="https://github.com/Adityakasara/Retail_DashBoard" target="_blank" rel="noopener noreferrer" class="pbi-action-btn" title="GitHub Repository">
+        <i data-lucide="github"></i> GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- 2. DAX Formula Bar -->
+  <div class="pbi-formula-bar">
+    <span class="dax-fx-badge">fx</span>
+    <span class="dax-measure-code" id="activeDaxFormula">
+      <strong>[Total Sales INR]</strong> = SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )
+    </span>
+  </div>
+
+  <!-- 3. Main Workspace Layout -->
+  <div class="pbi-main-layout">
     
-    <!-- Top Header -->
-    <header class="app-header">
-      <div class="header-left">
-        <div class="brand-badge">
-          <div class="pbi-bars">
-            <span></span><span></span><span></span>
-          </div>
-          <strong>Power BI</strong>
-        </div>
-        <div class="header-titles">
-          <h1>India Retail Performance Dashboard</h1>
-          <p class="header-subtitle">Executive Intelligence on Sales Revenue, Gross Margins, and Regional Growth (INR ₹)</p>
+    <!-- Left Slicers Pane -->
+    <aside class="pbi-filter-pane">
+      <div class="pane-header">
+        <span><i data-lucide="filter"></i> Filters & Slicers</span>
+        <button class="btn-reset-filters" id="btnResetSlicers">Clear All</button>
+      </div>
+
+      <!-- FY Slicer -->
+      <div class="slicer-group">
+        <span class="slicer-label">Financial Year</span>
+        <div class="pbi-slicer-pill" id="slicerYear">
+          <button class="s-btn active" data-val="ALL">All Financial Years</button>
+          <button class="s-btn" data-val="FY 25-26">FY 25-26 (Current)</button>
+          <button class="s-btn" data-val="FY 24-25">FY 24-25</button>
+          <button class="s-btn" data-val="FY 23-24">FY 23-24</button>
         </div>
       </div>
 
-      <div class="header-right">
-        <button class="nav-btn" id="btnWhatIf" title="Simulate price and discount scenarios">
-          <i data-lucide="sliders-horizontal"></i>
-          <span>Margin Simulator</span>
-        </button>
-        <button class="nav-btn" id="btnDaxExplorer" title="View DAX measures and data model">
-          <i data-lucide="code"></i>
-          <span>DAX & Model</span>
-        </button>
-        <button class="nav-btn primary" id="btnExportCsv" title="Download filtered data in CSV format">
-          <i data-lucide="download"></i>
-          <span>Export Data</span>
-        </button>
-        <button class="nav-btn-icon" id="themeToggle" title="Switch between Dark and Light mode">
-          <i data-lucide="sun" class="icon-sun"></i>
-          <i data-lucide="moon" class="icon-moon"></i>
-        </button>
-      </div>
-    </header>
-
-    <!-- Purpose & Context Banner -->
-    <section class="purpose-banner">
-      <div class="purpose-icon">
-        <i data-lucide="info"></i>
-      </div>
-      <div class="purpose-text">
-        <strong>Executive Purpose & Overview:</strong>
-        <span>This dashboard monitors retail sales performance, profitability margins, and customer demand trends across 4 Indian zones (North, South, West, East). Use the filters below to slice data by Financial Year, Region, Category, or Payment Channel.</span>
-      </div>
-    </section>
-
-    <!-- Slicers / Filters Section -->
-    <section class="filter-panel">
-      <div class="filter-panel-header">
-        <div class="filter-heading">
-          <i data-lucide="filter"></i>
-          <span>INTERACTIVE SLICERS</span>
-        </div>
-        <div class="active-filter-summary" id="activeFilterText">
-          Showing: All Financial Years • All India • All Categories • All Channels
-        </div>
-        <button class="reset-filter-btn" id="btnResetFilters">
-          <i data-lucide="rotate-ccw"></i> Reset Filters
-        </button>
-      </div>
-
-      <div class="slicers-row">
-        <!-- Year -->
-        <div class="slicer-item">
-          <label>Financial Year</label>
-          <div class="pill-group" id="yearPills">
-            <button class="pill active" data-year="ALL">All FY</button>
-            <button class="pill" data-year="FY 25-26">FY 25-26</button>
-            <button class="pill" data-year="FY 24-25">FY 24-25</button>
-            <button class="pill" data-year="FY 23-24">FY 23-24</button>
-          </div>
-        </div>
-
-        <!-- Region -->
-        <div class="slicer-item">
-          <label>Zone / Territory</label>
-          <div class="pill-group" id="regionPills">
-            <button class="pill active" data-region="ALL">All India</button>
-            <button class="pill" data-region="North">North</button>
-            <button class="pill" data-region="South">South</button>
-            <button class="pill" data-region="West">West</button>
-            <button class="pill" data-region="East">East</button>
-          </div>
-        </div>
-
-        <!-- Category -->
-        <div class="slicer-item">
-          <label>Product Category</label>
-          <div class="pill-group" id="categoryPills">
-            <button class="pill active" data-category="ALL">All Categories</button>
-            <button class="pill" data-category="Electronics & Appliances">Electronics</button>
-            <button class="pill" data-category="Home & Living">Home & Living</button>
-            <button class="pill" data-category="FMCG & Groceries">FMCG</button>
-            <button class="pill" data-category="Fashion & Apparel">Fashion</button>
-          </div>
-        </div>
-
-        <!-- Payment -->
-        <div class="slicer-item">
-          <label>Payment Channel</label>
-          <div class="pill-group" id="paymentPills">
-            <button class="pill active" data-payment="ALL">All Channels</button>
-            <button class="pill" data-payment="UPI / QR">UPI</button>
-            <button class="pill" data-payment="Credit / Debit Card">Cards / EMI</button>
-            <button class="pill" data-payment="Cash on Delivery">COD</button>
-          </div>
+      <!-- Zone Slicer -->
+      <div class="slicer-group">
+        <span class="slicer-label">Zone / Territory</span>
+        <div class="pbi-slicer-pill" id="slicerZone">
+          <button class="s-btn active" data-val="ALL">All India (4 Zones)</button>
+          <button class="s-btn" data-val="North">North Zone (Delhi/UP/PB)</button>
+          <button class="s-btn" data-val="South">South Zone (BLR/HYD/CHN)</button>
+          <button class="s-btn" data-val="West">West Zone (MUM/PUN/AMD)</button>
+          <button class="s-btn" data-val="East">East Zone (KOL/PAT/BBU)</button>
         </div>
       </div>
-    </section>
 
-    <!-- Main Scorecard KPIs (Clean, Big, Readable) -->
-    <section class="kpi-scorecard">
+      <!-- Category Slicer -->
+      <div class="slicer-group">
+        <span class="slicer-label">Product Category</span>
+        <div class="pbi-slicer-pill" id="slicerCat">
+          <button class="s-btn active" data-val="ALL">All Categories</button>
+          <button class="s-btn" data-val="Electronics & Appliances">Electronics & Appliances</button>
+          <button class="s-btn" data-val="Home & Living">Home & Living</button>
+          <button class="s-btn" data-val="FMCG & Groceries">FMCG & Groceries</button>
+          <button class="s-btn" data-val="Fashion & Apparel">Fashion & Apparel</button>
+        </div>
+      </div>
+
+      <!-- Payment Slicer -->
+      <div class="slicer-group">
+        <span class="slicer-label">Payment Channel</span>
+        <div class="pbi-slicer-pill" id="slicerPay">
+          <button class="s-btn active" data-val="ALL">All Payment Channels</button>
+          <button class="s-btn" data-val="UPI / QR">UPI (GPay / PhonePe)</button>
+          <button class="s-btn" data-val="Credit / Debit Card">Credit / Debit Cards</button>
+          <button class="s-btn" data-val="Cash on Delivery">Cash on Delivery (COD)</button>
+        </div>
+      </div>
+
+      <div class="dataset-info-box">
+        <strong>Data Model:</strong> Star Schema<br/>
+        <strong>Fact:</strong> Fact_Retail_Orders (1,200 rows)<br/>
+        <strong>Currency:</strong> Indian Rupee (INR ₹)
+      </div>
+    </aside>
+
+    <!-- Report Canvas -->
+    <main class="pbi-report-canvas">
       
-      <!-- KPI 1: Gross Sales -->
-      <div class="kpi-box primary-accent">
-        <div class="kpi-top">
-          <span class="kpi-title">Total Sales Revenue</span>
-          <span class="kpi-badge positive" id="kpiSalesGrowth">+16.4% YoY</span>
+      <!-- Canvas Header Banner -->
+      <div class="canvas-title-banner">
+        <div>
+          <h2>India Retail Sales & Profitability Performance</h2>
+          <p>Executive performance analysis across regional zones, product categories, and GST margins</p>
         </div>
-        <div class="kpi-value" id="kpiTotalSales">₹0</div>
-        <div class="kpi-bottom">
-          <span>Prior Year: <strong id="kpiSalesPy">₹0</strong></span>
-          <span class="dax-code-tag">SUM(Sales)</span>
+        <div class="active-breadcrumbs" id="activeFilterBadge">
+          Filter: All Financial Years • All India • All Categories
         </div>
       </div>
 
-      <!-- KPI 2: Net Profit -->
-      <div class="kpi-box success-accent">
-        <div class="kpi-top">
-          <span class="kpi-title">Net Gross Profit</span>
-          <span class="kpi-badge positive" id="kpiProfitGrowth">+21.8% YoY</span>
-        </div>
-        <div class="kpi-value text-success" id="kpiTotalProfit">₹0</div>
-        <div class="kpi-bottom">
-          <span>Prior Year: <strong id="kpiProfitPy">₹0</strong></span>
-          <span class="dax-code-tag">SUM(Profit)</span>
-        </div>
-      </div>
-
-      <!-- KPI 3: Profit Margin -->
-      <div class="kpi-box warning-accent">
-        <div class="kpi-top">
-          <span class="kpi-title">Profit Margin %</span>
-          <span class="kpi-badge neutral" id="kpiMarginTarget">Target: 15.0%</span>
-        </div>
-        <div class="kpi-value" id="kpiProfitMargin">0.0%</div>
-        <div class="kpi-bottom">
-          <span id="kpiMarginHealth">Healthy performance</span>
-          <span class="dax-code-tag">DIVIDE(Profit, Sales)</span>
-        </div>
-      </div>
-
-      <!-- KPI 4: Orders & Volume -->
-      <div class="kpi-box purple-accent">
-        <div class="kpi-top">
-          <span class="kpi-title">Total Orders</span>
-          <span class="kpi-badge neutral" id="kpiAovVal">AOV: ₹0</span>
-        </div>
-        <div class="kpi-value" id="kpiTotalOrders">0</div>
-        <div class="kpi-bottom">
-          <span id="kpiTotalUnits">0 Units Dispatched</span>
-          <span class="dax-code-tag">DISTINCTCOUNT(Order_ID)</span>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- Interactive Analytics Workspace (Organized into Clean Tabs) -->
-    <section class="analytics-workspace">
-      
-      <!-- Tab Navigation -->
-      <div class="workspace-tabs">
-        <button class="ws-tab active" data-tab="overview">
-          <i data-lucide="trending-up"></i> 1. Sales & Profit Trends
-        </button>
-        <button class="ws-tab" data-tab="regional">
-          <i data-lucide="map-pin"></i> 2. Regional & City Performance
-        </button>
-        <button class="ws-tab" data-tab="categories">
-          <i data-lucide="layers"></i> 3. Category & Margin Matrix
-        </button>
-        <button class="ws-tab" data-tab="payments">
-          <i data-lucide="wallet"></i> 4. Payment Channels & GST
-        </button>
-      </div>
-
-      <!-- Tab Content 1: Trends -->
-      <div class="ws-tab-content active" id="tabContentOverview">
-        <div class="card-grid-split">
-          <div class="chart-card flex-2">
-            <div class="chart-header">
-              <div>
-                <h3>Revenue & Gross Profit Trajectory Over Time</h3>
-                <p>Track how monthly sales and profit evolve across the selected financial period</p>
-              </div>
-              <div class="granularity-toggle" id="granularityToggle">
-                <button class="gran-btn active" data-gran="month">Monthly</button>
-                <button class="gran-btn" data-gran="quarter">Quarterly</button>
-              </div>
-            </div>
-            <div class="chart-container">
-              <canvas id="timelineChart"></canvas>
-            </div>
+      <!-- Executive KPI Cards -->
+      <section class="pbi-kpi-grid">
+        <div class="pbi-kpi-card kpi-c1">
+          <div class="kpi-header-row">
+            <span>Total Gross Sales</span>
+            <span class="kpi-growth-badge pos" id="kpiSalesGrowth">+16.4% YoY</span>
           </div>
-
-          <div class="chart-card flex-1">
-            <div class="chart-header">
-              <div>
-                <h3>Category Mix</h3>
-                <p>Contribution share by product category</p>
-              </div>
-            </div>
-            <div class="chart-container doughnut-box">
-              <canvas id="categoryChart"></canvas>
-              <div class="doughnut-center-info">
-                <span class="d-val" id="doughnutCenterVal">₹0</span>
-                <span class="d-sub">Total Sales</span>
-              </div>
-            </div>
+          <div class="kpi-big-value" id="kpiSales">₹0</div>
+          <div class="kpi-footer-row">
+            <span>Prior Year: <strong id="kpiSalesPy">₹0</strong></span>
+            <span>DAX: [Total Sales]</span>
           </div>
         </div>
-      </div>
 
-      <!-- Tab Content 2: Regional -->
-      <div class="ws-tab-content" id="tabContentRegional">
-        <div class="card-grid-split">
-          <div class="chart-card flex-1">
-            <div class="chart-header">
-              <div>
-                <h3>Zone-wise Sales Contribution</h3>
-                <p>Revenue distribution across North, South, West, and East</p>
-              </div>
-            </div>
-            <div class="chart-container">
-              <canvas id="regionChart"></canvas>
-            </div>
+        <div class="pbi-kpi-card kpi-c2">
+          <div class="kpi-header-row">
+            <span>Net Gross Profit</span>
+            <span class="kpi-growth-badge pos" id="kpiProfitGrowth">+21.8% YoY</span>
           </div>
-
-          <div class="chart-card flex-1">
-            <div class="chart-header">
-              <div>
-                <h3>Top Metropolitan Cities</h3>
-                <p>Sales volume in leading commercial retail centers</p>
-              </div>
-            </div>
-            <div class="chart-container">
-              <canvas id="cityChart"></canvas>
-            </div>
+          <div class="kpi-big-value green" id="kpiProfit">₹0</div>
+          <div class="kpi-footer-row">
+            <span>Prior Year: <strong id="kpiProfitPy">₹0</strong></span>
+            <span>DAX: [Net Profit]</span>
           </div>
         </div>
-      </div>
 
-      <!-- Tab Content 3: Categories & Margins -->
-      <div class="ws-tab-content" id="tabContentCategories">
-        <div class="chart-card">
-          <div class="chart-header">
+        <div class="pbi-kpi-card kpi-c3">
+          <div class="kpi-header-row">
+            <span>Blended Profit Margin</span>
+            <span class="kpi-growth-badge neu">Benchmark: 15.0%</span>
+          </div>
+          <div class="kpi-big-value" id="kpiMargin">0.0%</div>
+          <div class="kpi-footer-row">
+            <span>Margin Status: <strong id="kpiMarginStatus">Healthy</strong></span>
+            <span>DIVIDE(Profit, Sales)</span>
+          </div>
+        </div>
+
+        <div class="pbi-kpi-card kpi-c4">
+          <div class="kpi-header-row">
+            <span>Total Orders Placed</span>
+            <span class="kpi-growth-badge neu" id="kpiAov">AOV: ₹0</span>
+          </div>
+          <div class="kpi-big-value" id="kpiOrders">0</div>
+          <div class="kpi-footer-row">
+            <span id="kpiUnits">0 Units Sold</span>
+            <span>DISTINCTCOUNT(Order_ID)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visuals Row 1: Timeline & Category Mix -->
+      <section class="pbi-visuals-row">
+        <div class="pbi-chart-card">
+          <div class="chart-head">
             <div>
-              <h3>Sub-Category Sales & Profit Margin Matrix</h3>
-              <p>Green bars represent high-margin product lines (&gt;20%), yellow represents moderate (12-20%), and red indicates low-margin volume drivers (&lt;12%)</p>
-            </div>
-            <div class="margin-legend">
-              <span class="leg-item high"><span class="dot"></span> Margin &ge; 20%</span>
-              <span class="leg-item mid"><span class="dot"></span> Margin 12-20%</span>
-              <span class="leg-item low"><span class="dot"></span> Margin &lt; 12%</span>
+              <h3>Revenue & Gross Profit Performance Trajectory</h3>
+              <p>Monthly sales volume vs realized profit in INR (Lakhs)</p>
             </div>
           </div>
-          <div class="chart-container" style="height: 320px;">
-            <canvas id="subCategoryChart"></canvas>
+          <div class="chart-box">
+            <canvas id="timelineChart"></canvas>
           </div>
         </div>
-      </div>
 
-      <!-- Tab Content 4: Payments & GST -->
-      <div class="ws-tab-content" id="tabContentPayments">
-        <div class="card-grid-split">
-          <div class="chart-card flex-1">
-            <div class="chart-header">
-              <div>
-                <h3>Payment Methods & UPI Adoption</h3>
-                <p>Transaction volume split across payment instruments</p>
-              </div>
-            </div>
-            <div class="chart-container">
-              <canvas id="paymentChart"></canvas>
+        <div class="pbi-chart-card">
+          <div class="chart-head">
+            <div>
+              <h3>Category Revenue Contribution</h3>
+              <p>Sales distribution by product line</p>
             </div>
           </div>
-
-          <div class="chart-card flex-1">
-            <div class="chart-header">
-              <div>
-                <h3>GST & Tax Summary</h3>
-                <p>Estimated GST contribution based on applicable HSN slabs</p>
-              </div>
-            </div>
-            <div class="gst-summary-deck">
-              <div class="gst-card">
-                <span class="gst-title">Total GST Collected</span>
-                <span class="gst-val" id="cardTotalGst">₹0</span>
-                <span class="gst-sub">Output Tax Liability</span>
-              </div>
-              <div class="gst-card">
-                <span class="gst-title">UPI Transaction Share</span>
-                <span class="gst-val" id="cardUpiShare">0%</span>
-                <span class="gst-sub">Digital Payments Penetration</span>
-              </div>
-              <div class="gst-card">
-                <span class="gst-title">Average Realized Basket</span>
-                <span class="gst-val" id="cardAov">₹0</span>
-                <span class="gst-sub">Gross Order Value</span>
-              </div>
+          <div class="chart-box doughnut-wrapper">
+            <canvas id="categoryChart"></canvas>
+            <div class="doughnut-center">
+              <div class="val" id="dCenterSales">₹0</div>
+              <div class="lbl">Total Sales</div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-    </section>
+      <!-- Visuals Row 2: Zone & Top Cities -->
+      <section class="pbi-visuals-row equal">
+        <div class="pbi-chart-card">
+          <div class="chart-head">
+            <div>
+              <h3>Zone-wise Sales Contribution</h3>
+              <p>Revenue distribution across North, South, West, and East Zones</p>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="regionChart"></canvas>
+          </div>
+        </div>
 
-    <!-- Transaction Ledger Table Section -->
-    <section class="ledger-section">
-      <div class="ledger-header">
-        <div class="ledger-title-group">
-          <i data-lucide="database"></i>
+        <div class="pbi-chart-card">
+          <div class="chart-head">
+            <div>
+              <h3>Top Metropolitan Cities by Volume</h3>
+              <p>Sales performance in leading retail commercial hubs</p>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="cityChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Structured Data Matrix -->
+      <section class="pbi-matrix-card">
+        <div class="matrix-toolbar">
           <div>
-            <h3>Structured Order Transactions & Invoices</h3>
-            <p>Filterable retail ledger with GST breakdown and profit status</p>
+            <h3>Cleaned Retail Transaction Ledger</h3>
+            <p style="font-size: 0.72rem; color: var(--pbi-text-sub);">Granular order data with calculated profit margin and GST tax amounts</p>
+          </div>
+          <input type="text" class="search-input-field" id="tableSearchInput" placeholder="Search order ID, customer, city..." />
+        </div>
+
+        <div class="matrix-table-wrap">
+          <table class="pbi-table">
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Order Date</th>
+                <th>Customer Name</th>
+                <th>City & Zone</th>
+                <th>Category</th>
+                <th>Product Description</th>
+                <th>Sales (₹)</th>
+                <th>GST (₹)</th>
+                <th>Profit (₹)</th>
+                <th>Margin %</th>
+                <th>Payment Mode</th>
+                <th>Margin Tier</th>
+              </tr>
+            </thead>
+            <tbody id="matrixTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="matrix-footer">
+          <span id="matrixCountInfo">Showing 1 to 10 of 0 records</span>
+          <div class="pager-box">
+            <button class="p-btn" id="btnPrev"><i data-lucide="chevron-left"></i> Previous</button>
+            <span id="pageBadge" style="font-size: 0.72rem; font-weight: 600;">Page 1 / 1</span>
+            <button class="p-btn" id="btnNext">Next <i data-lucide="chevron-right"></i></button>
           </div>
         </div>
+      </section>
 
-        <div class="ledger-actions">
-          <div class="search-wrap">
-            <i data-lucide="search"></i>
-            <input type="text" id="tableSearch" placeholder="Search order ID, customer, city, product..." />
-          </div>
-          <select id="tableSortSelect" class="clean-select">
-            <option value="date_desc">Sort: Latest First</option>
-            <option value="sales_desc">Sort: Highest Sales (₹)</option>
-            <option value="profit_desc">Sort: Highest Profit (₹)</option>
-            <option value="margin_desc">Sort: Highest Margin %</option>
-          </select>
-        </div>
+    </main>
+  </div>
+
+  <!-- Bottom Page Tabs (Like Microsoft Power BI) -->
+  <footer class="pbi-bottom-bar">
+    <button class="pbi-page-tab active" data-page="overview"><i data-lucide="layout-dashboard"></i> Executive Overview</button>
+    <button class="pbi-page-tab" data-page="regional"><i data-lucide="map"></i> Regional Analysis</button>
+    <button class="pbi-page-tab" data-page="dax"><i data-lucide="code-2"></i> DAX Measures & Data Model</button>
+  </footer>
+
+  <!-- Modal: DAX Measures -->
+  <div class="modal-overlay" id="daxModal">
+    <div class="modal-body-pbi">
+      <div class="modal-header-pbi">
+        <h3>Power BI DAX Measures & Data Model</h3>
+        <button class="modal-close-btn" id="btnCloseDax"><i data-lucide="x"></i></button>
       </div>
-
-      <div class="table-container">
-        <table class="clean-table" id="transactionTable">
-          <thead>
-            <tr>
-              <th>Invoice ID</th>
-              <th>Date</th>
-              <th>Customer Name</th>
-              <th>Location</th>
-              <th>Zone</th>
-              <th>Category</th>
-              <th>Product Name</th>
-              <th>Sales (₹)</th>
-              <th>GST (₹)</th>
-              <th>Profit (₹)</th>
-              <th>Margin %</th>
-              <th>Payment</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <!-- Dynamically injected -->
-          </tbody>
-        </table>
-      </div>
-
-      <div class="ledger-footer">
-        <div class="ledger-count" id="tableInfo">Showing 1 to 10 of 0 records</div>
-        <div class="pager-controls">
-          <button class="pager-btn" id="btnPrevPage" disabled><i data-lucide="chevron-left"></i> Previous</button>
-          <span class="page-badge" id="pageIndicator">Page 1 / 1</span>
-          <button class="pager-btn" id="btnNextPage">Next <i data-lucide="chevron-right"></i></button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Modal 1: DAX Formulas & Star Schema Explorer -->
-    <div class="modal-backdrop" id="daxModal">
-      <div class="modal-window modal-large">
-        <div class="modal-head">
-          <div class="modal-title">
-            <i data-lucide="code-2"></i>
-            <div>
-              <h3>DAX Formulas & Data Modeling Architecture</h3>
-              <p>Inspect calculation measures and the underlying Star Schema data model</p>
-            </div>
-          </div>
-          <button class="modal-close" id="btnCloseDaxModal"><i data-lucide="x"></i></button>
-        </div>
-
-        <div class="modal-tab-strip">
-          <button class="m-tab active" data-target="mTabDax">DAX Measures Library</button>
-          <button class="m-tab" data-target="mTabSchema">Star Schema Data Model</button>
-          <button class="m-tab" data-target="mTabEtl">Power Query ETL Pipeline</button>
-        </div>
-
-        <div class="modal-body-content">
-          <!-- DAX Tab -->
-          <div class="modal-panel active" id="mTabDax">
-            <div class="dax-grid">
-              
-              <div class="dax-card">
-                <div class="dax-head">
-                  <span class="d-name">[Total Sales INR]</span>
-                  <span class="d-tag">Core Financial</span>
-                </div>
-                <pre><code>Total Sales INR = 
+      <div class="modal-content-pbi">
+        <div class="dax-grid-view">
+          <div class="dax-item-card">
+            <h4>[Total Sales INR]</h4>
+            <pre><code>Total Sales INR = 
 SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )</code></pre>
-                <p>Aggregates top-line gross invoiced sales revenue in Indian Rupees across the active filter context.</p>
-              </div>
+            <p>Calculates top-line invoiced retail revenue in Indian Rupees.</p>
+          </div>
 
-              <div class="dax-card">
-                <div class="dax-head">
-                  <span class="d-name">[Net Realized Profit]</span>
-                  <span class="d-tag">Profitability</span>
-                </div>
-                <pre><code>Net Realized Profit = 
+          <div class="dax-item-card">
+            <h4>[Net Realized Profit]</h4>
+            <pre><code>Net Realized Profit = 
 SUM ( 'Fact_Retail_Orders'[Net_Profit_Amount] )</code></pre>
-                <p>Calculates realized profit after deducting wholesale procurement cost, logistics, and discounts.</p>
-              </div>
+            <p>Net gross profit considering manufacturing cost and discounts.</p>
+          </div>
 
-              <div class="dax-card">
-                <div class="dax-head">
-                  <span class="d-name">[Blended Profit Margin %]</span>
-                  <span class="d-tag">Efficiency</span>
-                </div>
-                <pre><code>Blended Profit Margin % = 
-DIVIDE ( 
-    [Net Realized Profit], 
+          <div class="dax-item-card">
+            <h4>[Profit Margin %]</h4>
+            <pre><code>Profit Margin % = 
+DIVIDE ( [Net Realized Profit], [Total Sales INR], 0 )</code></pre>
+            <p>Calculates profitability percentage with safe zero handling.</p>
+          </div>
+
+          <div class="dax-item-card">
+            <h4>[Sales SPLY]</h4>
+            <pre><code>Sales SPLY = 
+CALCULATE ( 
     [Total Sales INR], 
-    0 
+    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
 )</code></pre>
-                <p>Safe division protecting against zero-sales scenarios, calculating accurate profit margin percentage.</p>
-              </div>
+            <p>Shifts fiscal calendar context by 1 full year for YoY benchmarking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-              <div class="dax-card">
-                <div class="dax-head">
-                  <span class="d-name">[Sales SPLY (Prior Year)]</span>
-                  <span class="d-tag">Time Intelligence</span>
-                </div>
-                <pre><code>Sales SPLY = 
-CALCULATE (
-    [Total Sales INR],
-    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] )
-)</code></pre>
-                <p>Shifts fiscal calendar context by 1 full year to establish comparative prior year benchmark.</p>
-              </div>
-
+  <!-- Modal: What-If -->
+  <div class="modal-overlay" id="whatIfModal">
+    <div class="modal-body-pbi" style="max-width: 540px;">
+      <div class="modal-header-pbi">
+        <h3>What-If Profitability Parameter Simulator</h3>
+        <button class="modal-close-btn" id="btnCloseWhatIf"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-content-pbi">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 4px;">
+              <span>Average Selling Price (ASP) Delta</span>
+              <span id="aspDeltaVal" style="color: var(--pbi-blue);">+0%</span>
             </div>
+            <input type="range" id="sliderAsp" min="-15" max="25" value="0" style="width: 100%; accent-color: var(--pbi-blue);" />
           </div>
 
-          <!-- Schema Tab -->
-          <div class="modal-panel" id="mTabSchema">
-            <div class="schema-layout">
-              <div class="schema-box central-fact">
-                <div class="schema-box-header fact-color">
-                  <i data-lucide="database"></i> Fact_Retail_Orders
-                </div>
-                <div class="schema-box-body">
-                  <div><span class="key-pk">PK</span> Invoice_ID</div>
-                  <div><span class="key-fk">FK</span> Customer_Key</div>
-                  <div><span class="key-fk">FK</span> Product_Key</div>
-                  <div><span class="key-fk">FK</span> City_Key</div>
-                  <div><span class="key-fk">FK</span> Date_Key</div>
-                  <div><span class="key-val">#</span> Gross_Sales_Amount</div>
-                  <div><span class="key-val">#</span> GST_Amount</div>
-                  <div><span class="key-val">#</span> Net_Profit_Amount</div>
-                </div>
-              </div>
-
-              <div class="dim-boxes-grid">
-                <div class="schema-box">
-                  <div class="schema-box-header"><i data-lucide="users"></i> Dim_Customer</div>
-                  <div class="schema-box-body">
-                    <div><span class="key-pk">PK</span> Customer_Key</div>
-                    <div>Customer_Name</div>
-                    <div>Customer_Type</div>
-                  </div>
-                </div>
-
-                <div class="schema-box">
-                  <div class="schema-box-header"><i data-lucide="package"></i> Dim_Product</div>
-                  <div class="schema-box-body">
-                    <div><span class="key-pk">PK</span> Product_Key</div>
-                    <div>Category & Sub_Category</div>
-                    <div>HSN_Code & GST_Rate</div>
-                  </div>
-                </div>
-
-                <div class="schema-box">
-                  <div class="schema-box-header"><i data-lucide="map-pin"></i> Dim_Geography</div>
-                  <div class="schema-box-body">
-                    <div><span class="key-pk">PK</span> City_Key</div>
-                    <div>City, State, Zone</div>
-                    <div>Tier (Metro / Tier-1)</div>
-                  </div>
-                </div>
-
-                <div class="schema-box">
-                  <div class="schema-box-header"><i data-lucide="calendar"></i> Dim_Fiscal_Calendar</div>
-                  <div class="schema-box-body">
-                    <div><span class="key-pk">PK</span> Date_Key</div>
-                    <div>Financial_Year (FY)</div>
-                    <div>Fiscal_Quarter (Q1-Q4)</div>
-                  </div>
-                </div>
-              </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 4px;">
+              <span>Discount Policy Adjustment</span>
+              <span id="discDeltaVal" style="color: var(--pbi-blue);">0%</span>
             </div>
+            <input type="range" id="sliderDisc" min="-10" max="15" value="0" style="width: 100%; accent-color: var(--pbi-blue);" />
           </div>
 
-          <!-- ETL Tab -->
-          <div class="modal-panel" id="mTabEtl">
-            <div class="etl-steps-list">
-              <div class="etl-card">
-                <span class="step-badge">Step 1</span>
-                <h4>Data Ingestion & Encoding</h4>
-                <p>Connected to enterprise Point-of-Sale (POS) extracts. Normalized INR currencies and standard ISO dates.</p>
-              </div>
-              <div class="etl-card">
-                <span class="step-badge">Step 2</span>
-                <h4>Deduplication & Data Cleansing</h4>
-                <p>Removed cancelled orders and null values, standardizing state and city naming conventions.</p>
-              </div>
-              <div class="etl-card">
-                <span class="step-badge">Step 3</span>
-                <h4>Data Privacy & Anonymization</h4>
-                <p>Hashed customer PII (phone/email) using SHA-256 for compliance while retaining demographic segmentation.</p>
-              </div>
-              <div class="etl-card">
-                <span class="step-badge">Step 4</span>
-                <h4>Star Schema Transformation</h4>
-                <p>Engineered 1 Fact table linked to 4 Dimension tables for ultra-fast in-memory analytical querying.</p>
-              </div>
+          <div style="background: #0d121a; padding: 0.85rem; border-radius: 4px; border: 1px solid var(--pbi-card-border); margin-top: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+              <span>Projected Revenue:</span>
+              <strong id="simSalesVal">₹0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+              <span>Projected Profit:</span>
+              <strong id="simProfitVal" style="color: var(--pbi-green);">₹0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>New Profit Margin:</span>
+              <strong id="simMarginVal">0.0%</strong>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Modal 2: What-If Profitability Simulator -->
-    <div class="modal-backdrop" id="whatIfModal">
-      <div class="modal-window modal-medium">
-        <div class="modal-head">
-          <div class="modal-title">
-            <i data-lucide="sliders-horizontal"></i>
-            <div>
-              <h3>What-If Profitability Simulator</h3>
-              <p>Simulate pricing, discount changes, and sales volume growth on bottom-line profit</p>
-            </div>
-          </div>
-          <button class="modal-close" id="btnCloseWhatIfModal"><i data-lucide="x"></i></button>
-        </div>
-
-        <div class="modal-body-content">
-          <div class="slider-stack">
-            
-            <div class="slider-row">
-              <div class="slider-labels">
-                <span>Average Selling Price (ASP) Adjustment</span>
-                <strong id="valPriceDelta">+0%</strong>
-              </div>
-              <input type="range" id="sliderPrice" min="-15" max="25" value="0" step="1" />
-              <div class="slider-bounds"><span>-15%</span><span>0% (Base)</span><span>+25%</span></div>
-            </div>
-
-            <div class="slider-row">
-              <div class="slider-labels">
-                <span>Discount Optimization Delta</span>
-                <strong id="valDiscountDelta">0%</strong>
-              </div>
-              <input type="range" id="sliderDiscount" min="-10" max="15" value="0" step="1" />
-              <div class="slider-bounds"><span>-10% (Strict)</span><span>0% (Current)</span><span>+15% (Aggressive)</span></div>
-            </div>
-
-            <div class="slider-row">
-              <div class="slider-labels">
-                <span>Unit Sales Volume Growth</span>
-                <strong id="valVolumeDelta">+0%</strong>
-              </div>
-              <input type="range" id="sliderVolume" min="-20" max="40" value="0" step="5" />
-              <div class="slider-bounds"><span>-20%</span><span>0%</span><span>+40%</span></div>
-            </div>
-
-          </div>
-
-          <div class="sim-results-grid">
-            <div class="sim-result-box">
-              <span class="sim-label">Projected Sales</span>
-              <span class="sim-num" id="simSales">₹0</span>
-              <span class="sim-delta positive" id="simSalesDelta">+₹0</span>
-            </div>
-            <div class="sim-result-box">
-              <span class="sim-label">Projected Gross Profit</span>
-              <span class="sim-num" id="simProfit">₹0</span>
-              <span class="sim-delta positive" id="simProfitDelta">+₹0</span>
-            </div>
-            <div class="sim-result-box">
-              <span class="sim-label">Projected Margin %</span>
-              <span class="sim-num" id="simMargin">0.0%</span>
-              <span class="sim-delta neutral" id="simMarginDelta">0.0% vs Base</span>
-            </div>
-          </div>
-
-          <div class="modal-footer-btns">
-            <button class="nav-btn" id="btnResetSimulation">Reset</button>
-            <button class="nav-btn primary" id="btnApplySimulation">Apply Simulation</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="app-footer">
-      <div class="footer-left">
-        <span class="live-dot"></span>
-        <span>India Retail Analytics Model (INR ₹) • Power BI Semantic Architecture</span>
-      </div>
-      <div class="footer-right">
-        <a href="https://github.com/Adityakasara/Retail_DashBoard" target="_blank" rel="noopener noreferrer">
-          <i data-lucide="github"></i> Aditya Kasara | Retail_DashBoard
-        </a>
-      </div>
-    </footer>
-
   </div>
 
   <script src="app.js"></script>

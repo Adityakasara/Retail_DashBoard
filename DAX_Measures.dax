@@ -1,0 +1,76 @@
+/* ==============================================================================
+   DAX MEASURES LIBRARY - INDIA RETAIL SALES PERFORMANCE DASHBOARD
+   Dataset: Fact_Retail_Orders, Dim_Customer, Dim_Product, Dim_Geography, Dim_Fiscal_Calendar
+   ============================================================================== */
+
+-- 1. CORE REVENUE MEASURE
+[Total Sales INR] = 
+SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )
+
+-- 2. TOTAL REALIZED GROSS PROFIT
+[Net Realized Profit] = 
+SUM ( 'Fact_Retail_Orders'[Net_Profit_Amount] )
+
+-- 3. BLENDED PROFIT MARGIN %
+[Profit Margin %] = 
+DIVIDE ( 
+    [Net Realized Profit], 
+    [Total Sales INR], 
+    0 
+)
+
+-- 4. TOTAL UNIQUE ORDERS
+[Total Orders] = 
+DISTINCTCOUNT ( 'Fact_Retail_Orders'[Invoice_ID] )
+
+-- 5. AVERAGE ORDER VALUE (AOV)
+[Average Order Value] = 
+DIVIDE ( 
+    [Total Sales INR], 
+    [Total Orders], 
+    0 
+)
+
+-- 6. TOTAL UNITS DISPATCHED
+[Total Units Sold] = 
+SUM ( 'Fact_Retail_Orders'[Quantity] )
+
+-- 7. PRIOR YEAR SALES (TIME INTELLIGENCE)
+[Sales SPLY] = 
+CALCULATE ( 
+    [Total Sales INR], 
+    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
+)
+
+-- 8. YEAR-OVER-YEAR SALES GROWTH %
+[YoY Sales Growth %] = 
+VAR CurrentSales = [Total Sales INR]
+VAR PriorYearSales = [Sales SPLY]
+RETURN
+    DIVIDE ( CurrentSales - PriorYearSales, PriorYearSales, 0 )
+
+-- 9. PRIOR YEAR PROFIT
+[Profit SPLY] = 
+CALCULATE ( 
+    [Net Realized Profit], 
+    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
+)
+
+-- 10. YEAR-OVER-YEAR PROFIT GROWTH %
+[YoY Profit Growth %] = 
+VAR CurrentProfit = [Net Realized Profit]
+VAR PriorProfit = [Profit SPLY]
+RETURN
+    DIVIDE ( CurrentProfit - PriorProfit, PriorProfit, 0 )
+
+-- 11. TOTAL GST OUTPUT LIABILITY
+[GST Output Collected] = 
+SUM ( 'Fact_Retail_Orders'[GST_Amount] )
+
+-- 12. UPI PENETRATION SHARE %
+[UPI Payment Share %] = 
+DIVIDE (
+    CALCULATE ( [Total Orders], 'Fact_Retail_Orders'[Payment_Mode] = "UPI / QR" ),
+    [Total Orders],
+    0
+)
