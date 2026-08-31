@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retail Sales Performance Dashboard | Power BI Analytics</title>
+  <meta name="description" content="Interactive Power BI Retail Sales Performance Dashboard analyzing profitability, sales trends, regional distribution, and DAX measures." />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-dark">
+  <div class="app-layout">
+    
+    <!-- Top Navigation / Executive Bar -->
+    <header class="top-nav" id="mainHeader">
+      <div class="nav-brand">
+        <div class="powerbi-badge">
+          <div class="pbi-bars">
+            <span class="bar b1"></span>
+            <span class="bar b2"></span>
+            <span class="bar b3"></span>
+          </div>
+          <span class="brand-text">Power BI</span>
+        </div>
+        <div class="report-title-group">
+          <h1 class="report-title">Retail Sales Performance & Profitability Dashboard</h1>
+          <div class="report-meta">
+            <span class="live-pulse"></span>
+            <span class="meta-label">Dataset: Superstore Global Retail</span>
+            <span class="meta-separator">•</span>
+            <span class="meta-label" id="lastUpdatedTime">Updated Just Now</span>
+            <span class="meta-separator">•</span>
+            <span class="badge-tag">DirectQuery DAX Engine</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Quick Action Buttons -->
+        <button class="btn btn-glass" id="btnWhatIf" title="What-If Scenario Simulator">
+          <i data-lucide="sliders"></i>
+          <span>What-If Simulator</span>
+        </button>
+        <button class="btn btn-glass" id="btnDaxExplorer" title="Explore DAX Measures & Star Schema">
+          <i data-lucide="code-2"></i>
+          <span>DAX & Data Model</span>
+        </button>
+        <button class="btn btn-primary" id="btnExportCsv" title="Export Filtered Transactions">
+          <i data-lucide="download"></i>
+          <span>Export Data</span>
+        </button>
+        <button class="btn btn-icon" id="themeToggle" title="Toggle Light/Dark Theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <a href="https://github.com/Adityakasara/Retail_DashBoard" target="_blank" rel="noopener noreferrer" class="btn btn-icon git-btn" title="View Source on GitHub">
+          <i data-lucide="github"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Slicers & Global Filter Ribbon -->
+    <section class="filter-ribbon" id="filterRibbon">
+      <div class="filter-header">
+        <div class="filter-title">
+          <i data-lucide="filter"></i>
+          <span>Dimensional Slicers</span>
+        </div>
+        <button class="btn-text" id="btnResetFilters">
+          <i data-lucide="rotate-ccw"></i>
+          <span>Reset Slicers</span>
+        </button>
+      </div>
+
+      <div class="filter-grid">
+        <!-- Date / Year Slicer -->
+        <div class="filter-group">
+          <label class="filter-label"><i data-lucide="calendar"></i> Year Dimension</label>
+          <div class="pill-selector" id="yearPills">
+            <button class="pill active" data-year="ALL">All Time</button>
+            <button class="pill" data-year="2026">2026</button>
+            <button class="pill" data-year="2025">2025</button>
+            <button class="pill" data-year="2024">2024</button>
+            <button class="pill" data-year="2023">2023</button>
+          </div>
+        </div>
+
+        <!-- Region Slicer -->
+        <div class="filter-group">
+          <label class="filter-label"><i data-lucide="map-pin"></i> Territory / Region</label>
+          <div class="pill-selector" id="regionPills">
+            <button class="pill active" data-region="ALL">All Regions</button>
+            <button class="pill" data-region="West">West</button>
+            <button class="pill" data-region="East">East</button>
+            <button class="pill" data-region="Central">Central</button>
+            <button class="pill" data-region="South">South</button>
+          </div>
+        </div>
+
+        <!-- Category Slicer -->
+        <div class="filter-group">
+          <label class="filter-label"><i data-lucide="layers"></i> Product Category</label>
+          <div class="pill-selector" id="categoryPills">
+            <button class="pill active" data-category="ALL">All Categories</button>
+            <button class="pill" data-category="Technology">Technology</button>
+            <button class="pill" data-category="Furniture">Furniture</button>
+            <button class="pill" data-category="Office Supplies">Office Supplies</button>
+          </div>
+        </div>
+
+        <!-- Customer Segment Slicer -->
+        <div class="filter-group">
+          <label class="filter-label"><i data-lucide="users"></i> Customer Segment</label>
+          <div class="pill-selector" id="segmentPills">
+            <button class="pill active" data-segment="ALL">All Segments</button>
+            <button class="pill" data-segment="Consumer">Consumer</button>
+            <button class="pill" data-segment="Corporate">Corporate</button>
+            <button class="pill" data-segment="Home Office">Home Office</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Analytics Content -->
+    <main class="dashboard-body">
+      
+      <!-- Executive KPI Ribbon (DAX Computed) -->
+      <section class="kpi-grid">
+        <!-- KPI 1: Total Sales -->
+        <div class="kpi-card" data-measure="TotalSales">
+          <div class="kpi-top">
+            <span class="kpi-title">Total Sales Revenue</span>
+            <div class="kpi-icon-wrap sales-bg">
+              <i data-lucide="dollar-sign"></i>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-main-val" id="kpiTotalSales">$0</span>
+            <span class="kpi-badge positive" id="kpiSalesGrowth">+14.2% YoY</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext" id="kpiSalesPy">PY: $0</span>
+            <span class="dax-tag">DAX: SUM(Sales)</span>
+          </div>
+          <div class="kpi-spark-bar" style="--prog: 82%;"></div>
+        </div>
+
+        <!-- KPI 2: Total Profit -->
+        <div class="kpi-card" data-measure="TotalProfit">
+          <div class="kpi-top">
+            <span class="kpi-title">Total Gross Profit</span>
+            <div class="kpi-icon-wrap profit-bg">
+              <i data-lucide="trending-up"></i>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-main-val" id="kpiTotalProfit">$0</span>
+            <span class="kpi-badge positive" id="kpiProfitGrowth">+18.6% YoY</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext" id="kpiProfitPy">PY: $0</span>
+            <span class="dax-tag">DAX: SUM(Profit)</span>
+          </div>
+          <div class="kpi-spark-bar profit-bar" style="--prog: 76%;"></div>
+        </div>
+
+        <!-- KPI 3: Profit Margin % -->
+        <div class="kpi-card" data-measure="ProfitMargin">
+          <div class="kpi-top">
+            <span class="kpi-title">Profit Margin %</span>
+            <div class="kpi-icon-wrap margin-bg">
+              <i data-lucide="percent"></i>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-main-val" id="kpiProfitMargin">0.0%</span>
+            <span class="kpi-badge positive" id="kpiMarginTarget">Target: 15.0%</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext">Benchmark: 12.5%</span>
+            <span class="dax-tag">DIVIDE(Profit, Sales)</span>
+          </div>
+          <div class="kpi-spark-bar margin-prog" id="kpiMarginBar" style="--prog: 68%;"></div>
+        </div>
+
+        <!-- KPI 4: Total Orders & Volume -->
+        <div class="kpi-card" data-measure="TotalOrders">
+          <div class="kpi-top">
+            <span class="kpi-title">Total Orders Placed</span>
+            <div class="kpi-icon-wrap orders-bg">
+              <i data-lucide="shopping-bag"></i>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-main-val" id="kpiTotalOrders">0</span>
+            <span class="kpi-badge neutral" id="kpiTotalUnits">0 Units</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext" id="kpiFulfillmentRate">98.4% On-time</span>
+            <span class="dax-tag">DISTINCTCOUNT(Order_ID)</span>
+          </div>
+          <div class="kpi-spark-bar orders-prog" style="--prog: 91%;"></div>
+        </div>
+
+        <!-- KPI 5: Average Order Value (AOV) -->
+        <div class="kpi-card" data-measure="AOV">
+          <div class="kpi-top">
+            <span class="kpi-title">Average Order Value (AOV)</span>
+            <div class="kpi-icon-wrap aov-bg">
+              <i data-lucide="credit-card"></i>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-main-val" id="kpiAOV">$0</span>
+            <span class="kpi-badge positive" id="kpiAovGrowth">+5.8%</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext">Avg Items/Order: 3.4</span>
+            <span class="dax-tag">[Total Sales]/[Total Orders]</span>
+          </div>
+          <div class="kpi-spark-bar aov-prog" style="--prog: 64%;"></div>
+        </div>
+
+        <!-- KPI 6: Average Discount & Return Rate -->
+        <div class="kpi-card" data-measure="DiscountReturn">
+          <div class="kpi-top">
+            <span class="kpi-title">Avg Discount Rate</span>
+            <div class="kpi-icon-wrap discount-bg">
+              <i data-lucide="tag"></i>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-main-val" id="kpiAvgDiscount">0.0%</span>
+            <span class="kpi-badge warning" id="kpiReturnRate">Return: 2.1%</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext">Discount Elasticity: 1.42</span>
+            <span class="dax-tag">AVERAGE(Discount)</span>
+          </div>
+          <div class="kpi-spark-bar discount-prog" style="--prog: 40%;"></div>
+        </div>
+      </section>
+
+      <!-- Primary Analytics Grid -->
+      <section class="visuals-grid">
+        
+        <!-- Chart 1: Sales & Profit Timeline -->
+        <div class="chart-card span-2" id="cardTimeline">
+          <div class="chart-header">
+            <div class="chart-title-wrap">
+              <i data-lucide="line-chart" class="chart-header-icon"></i>
+              <div>
+                <h2 class="chart-title">Sales Revenue & Profit Performance Over Time</h2>
+                <p class="chart-subtitle">Historical trajectory with dual-axis sales volume ($) vs gross profit ($)</p>
+              </div>
+            </div>
+            <div class="chart-controls">
+              <div class="button-toggle" id="timelineGranularity">
+                <button class="toggle-btn active" data-gran="month">Monthly</button>
+                <button class="toggle-btn" data-gran="quarter">Quarterly</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Regional Profitability & Slicing -->
+        <div class="chart-card" id="cardRegion">
+          <div class="chart-header">
+            <div class="chart-title-wrap">
+              <i data-lucide="map" class="chart-header-icon"></i>
+              <div>
+                <h2 class="chart-title">Regional Sales & Profit Margin</h2>
+                <p class="chart-subtitle">Sales volume and profit margin % by territory</p>
+              </div>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="regionChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Category & Sub-Category Matrix -->
+        <div class="chart-card" id="cardCategory">
+          <div class="chart-header">
+            <div class="chart-title-wrap">
+              <i data-lucide="pie-chart" class="chart-header-icon"></i>
+              <div>
+                <h2 class="chart-title">Category Revenue Contribution</h2>
+                <p class="chart-subtitle">Distribution by Technology, Furniture & Office Supplies</p>
+              </div>
+            </div>
+            <span class="badge-pill" id="topCategoryPill">Top: Technology</span>
+          </div>
+          <div class="chart-body doughnut-wrap">
+            <canvas id="categoryChart"></canvas>
+            <div class="doughnut-center-stat">
+              <span class="d-val" id="doughnutCenterTotal">$0</span>
+              <span class="d-lbl">Total Sales</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 4: Sub-Category Profitability Scatter / Quad -->
+        <div class="chart-card span-2" id="cardSubCategory">
+          <div class="chart-header">
+            <div class="chart-title-wrap">
+              <i data-lucide="bar-chart-3" class="chart-header-icon"></i>
+              <div>
+                <h2 class="chart-title">Sub-Category Sales & Profit Margin Matrix</h2>
+                <p class="chart-subtitle">Identifying profit drivers vs margin-diluting sub-categories</p>
+              </div>
+            </div>
+            <div class="legend-pills">
+              <span class="leg-pill high-margin"><span class="dot"></span> Margin &gt; 20%</span>
+              <span class="leg-pill mid-margin"><span class="dot"></span> Margin 10-20%</span>
+              <span class="leg-pill low-margin"><span class="dot"></span> Margin &lt; 10%</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="subCategoryChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 5: Customer Segment & Shipping Breakdown -->
+        <div class="chart-card" id="cardSegment">
+          <div class="chart-header">
+            <div class="chart-title-wrap">
+              <i data-lucide="user-check" class="chart-header-icon"></i>
+              <div>
+                <h2 class="chart-title">Customer Segment Breakdown</h2>
+                <p class="chart-subtitle">Sales contribution by buyer persona</p>
+              </div>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="segmentChart"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Interactive Data Grid / Transaction Explorer -->
+      <section class="table-card">
+        <div class="table-header">
+          <div class="table-title-group">
+            <div class="title-with-icon">
+              <i data-lucide="database"></i>
+              <h2>Structured Retail Transaction Ledger</h2>
+            </div>
+            <p class="table-subtitle">Cleaned and transformed transactional dataset with real-time DAX calculated margins</p>
+          </div>
+          <div class="table-actions">
+            <div class="search-input-wrap">
+              <i data-lucide="search"></i>
+              <input type="text" id="tableSearch" placeholder="Search orders, customers, products, states..." />
+            </div>
+            <select id="tableSortSelect" class="custom-select">
+              <option value="date_desc">Sort: Latest First</option>
+              <option value="sales_desc">Sort: Highest Sales</option>
+              <option value="profit_desc">Sort: Highest Profit</option>
+              <option value="margin_desc">Sort: Highest Margin %</option>
+              <option value="margin_asc">Sort: Lowest Margin %</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="transactionTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer Name</th>
+                <th>Segment</th>
+                <th>Region / State</th>
+                <th>Category</th>
+                <th>Product Name</th>
+                <th>Sales ($)</th>
+                <th>Discount</th>
+                <th>Profit ($)</th>
+                <th>Margin %</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Pagination and Info -->
+        <div class="table-footer">
+          <div class="table-info" id="tableInfo">Showing 1 to 10 of 0 orders</div>
+          <div class="pagination" id="pagination">
+            <button class="page-btn" id="btnPrevPage" disabled><i data-lucide="chevron-left"></i> Previous</button>
+            <div class="page-numbers" id="pageNumbers"></div>
+            <button class="page-btn" id="btnNextPage">Next <i data-lucide="chevron-right"></i></button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal 1: Power BI DAX Measures & Star Schema Explorer -->
+    <div class="modal-overlay" id="daxModal">
+      <div class="modal-card modal-lg">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <div class="pbi-icon-circle">
+              <i data-lucide="binary"></i>
+            </div>
+            <div>
+              <h3>DAX Formulas & Data Modeling Architecture</h3>
+              <p>Direct inspection of all business logic measures, relationships, and ETL transformations</p>
+            </div>
+          </div>
+          <button class="modal-close" id="btnCloseDaxModal">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <!-- Modal Tabs -->
+        <div class="modal-tabs">
+          <button class="tab-btn active" data-tab="dax">DAX Measures Library (6 Core)</button>
+          <button class="tab-btn" data-tab="schema">Star Schema Architecture</button>
+          <button class="tab-btn" data-tab="etl">Power Query ETL Pipeline</button>
+        </div>
+
+        <!-- Tab 1: DAX Measures -->
+        <div class="tab-content active" id="tabDax">
+          <div class="dax-cards-grid">
+            
+            <div class="dax-item">
+              <div class="dax-item-header">
+                <span class="dax-name">[Total Sales]</span>
+                <span class="dax-category">Core Financial</span>
+              </div>
+              <pre class="dax-code"><code>Total Sales = 
+SUM ( 'Fact_Orders'[Sales_Amount] )</code></pre>
+              <p class="dax-desc">Computes aggregated top-line retail sales revenue across active filter context.</p>
+            </div>
+
+            <div class="dax-item">
+              <div class="dax-item-header">
+                <span class="dax-name">[Total Profit]</span>
+                <span class="dax-category">Core Financial</span>
+              </div>
+              <pre class="dax-code"><code>Total Profit = 
+SUM ( 'Fact_Orders'[Profit_Amount] )</code></pre>
+              <p class="dax-desc">Calculates net gross profit considering manufacturing cost, shipping, and discount write-downs.</p>
+            </div>
+
+            <div class="dax-item">
+              <div class="dax-item-header">
+                <span class="dax-name">[Profit Margin %]</span>
+                <span class="dax-category">Efficiency Measure</span>
+              </div>
+              <pre class="dax-code"><code>Profit Margin % = 
+DIVIDE ( 
+    [Total Profit], 
+    [Total Sales], 
+    0 
+)</code></pre>
+              <p class="dax-desc">Safe division to protect against division by zero; outputs relative bottom-line profitability.</p>
+            </div>
+
+            <div class="dax-item">
+              <div class="dax-item-header">
+                <span class="dax-name">[Sales PY (Prior Year)]</span>
+                <span class="dax-category">Time Intelligence</span>
+              </div>
+              <pre class="dax-code"><code>Sales PY = 
+CALCULATE (
+    [Total Sales],
+    SAMEPERIODLASTYEAR ( 'Dim_Calendar'[Date] )
+)</code></pre>
+              <p class="dax-desc">Shifts calendar filter context by 1 full year to establish comparative benchmark.</p>
+            </div>
+
+            <div class="dax-item">
+              <div class="dax-item-header">
+                <span class="dax-name">[YoY Sales Growth %]</span>
+                <span class="dax-category">Time Intelligence</span>
+              </div>
+              <pre class="dax-code"><code>YoY Sales Growth % = 
+VAR CurrentSales = [Total Sales]
+VAR PriorYearSales = [Sales PY]
+RETURN
+    DIVIDE ( CurrentSales - PriorYearSales, PriorYearSales, 0 )</code></pre>
+              <p class="dax-desc">Dynamic variable evaluation computing year-over-year revenue expansion rate.</p>
+            </div>
+
+            <div class="dax-item">
+              <div class="dax-item-header">
+                <span class="dax-name">[Average Order Value]</span>
+                <span class="dax-category">Order Metrics</span>
+              </div>
+              <pre class="dax-code"><code>Average Order Value = 
+DIVIDE (
+    [Total Sales],
+    DISTINCTCOUNT ( 'Fact_Orders'[Order_ID] ),
+    0
+)</code></pre>
+              <p class="dax-desc">Evaluates revenue per unique transaction header for basket size analytics.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 2: Star Schema Data Model -->
+        <div class="tab-content" id="tabSchema">
+          <div class="schema-canvas-wrap">
+            <div class="schema-diagram">
+              <!-- Central Fact Table -->
+              <div class="model-table fact-table">
+                <div class="model-table-header">
+                  <i data-lucide="table"></i>
+                  <span>Fact_Orders</span>
+                  <span class="badge-fact">FACT</span>
+                </div>
+                <div class="model-table-body">
+                  <div class="col-item pk-col"><i data-lucide="key"></i> Row_ID (PK)</div>
+                  <div class="col-item fk-col"><i data-lucide="link"></i> Order_ID</div>
+                  <div class="col-item fk-col"><i data-lucide="link"></i> Customer_Key (FK)</div>
+                  <div class="col-item fk-col"><i data-lucide="link"></i> Product_Key (FK)</div>
+                  <div class="col-item fk-col"><i data-lucide="link"></i> Location_Key (FK)</div>
+                  <div class="col-item fk-col"><i data-lucide="link"></i> Order_Date_Key (FK)</div>
+                  <div class="col-item measure-col"><i data-lucide="hash"></i> Sales_Amount</div>
+                  <div class="col-item measure-col"><i data-lucide="hash"></i> Quantity</div>
+                  <div class="col-item measure-col"><i data-lucide="hash"></i> Discount_Rate</div>
+                  <div class="col-item measure-col"><i data-lucide="hash"></i> Profit_Amount</div>
+                </div>
+              </div>
+
+              <!-- Surrounding Dimension Tables -->
+              <div class="dim-tables-container">
+                <div class="model-table dim-table">
+                  <div class="model-table-header">
+                    <i data-lucide="users"></i>
+                    <span>Dim_Customer</span>
+                    <span class="badge-dim">1:*</span>
+                  </div>
+                  <div class="model-table-body">
+                    <div class="col-item pk-col"><i data-lucide="key"></i> Customer_Key (PK)</div>
+                    <div class="col-item">Customer_Name</div>
+                    <div class="col-item">Segment</div>
+                    <div class="col-item">Lifetime_Tier</div>
+                  </div>
+                </div>
+
+                <div class="model-table dim-table">
+                  <div class="model-table-header">
+                    <i data-lucide="box"></i>
+                    <span>Dim_Product</span>
+                    <span class="badge-dim">1:*</span>
+                  </div>
+                  <div class="model-table-body">
+                    <div class="col-item pk-col"><i data-lucide="key"></i> Product_Key (PK)</div>
+                    <div class="col-item">Category</div>
+                    <div class="col-item">Sub_Category</div>
+                    <div class="col-item">Product_Name</div>
+                    <div class="col-item">Unit_Cost</div>
+                  </div>
+                </div>
+
+                <div class="model-table dim-table">
+                  <div class="model-table-header">
+                    <i data-lucide="map-pin"></i>
+                    <span>Dim_Location</span>
+                    <span class="badge-dim">1:*</span>
+                  </div>
+                  <div class="model-table-body">
+                    <div class="col-item pk-col"><i data-lucide="key"></i> Location_Key (PK)</div>
+                    <div class="col-item">Region</div>
+                    <div class="col-item">State_Province</div>
+                    <div class="col-item">City</div>
+                    <div class="col-item">Postal_Code</div>
+                  </div>
+                </div>
+
+                <div class="model-table dim-table">
+                  <div class="model-table-header">
+                    <i data-lucide="calendar"></i>
+                    <span>Dim_Calendar</span>
+                    <span class="badge-dim">1:*</span>
+                  </div>
+                  <div class="model-table-body">
+                    <div class="col-item pk-col"><i data-lucide="key"></i> Date_Key (PK)</div>
+                    <div class="col-item">Full_Date</div>
+                    <div class="col-item">Year</div>
+                    <div class="col-item">Quarter</div>
+                    <div class="col-item">Month_Name</div>
+                    <div class="col-item">Is_Weekend</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Power Query ETL -->
+        <div class="tab-content" id="tabEtl">
+          <div class="etl-steps-flow">
+            
+            <div class="etl-step-card">
+              <div class="step-badge">Step 1</div>
+              <h4>Data Ingestion & Schema Extraction</h4>
+              <p>Connected to enterprise retail CSV/SQL raw extracts. Applied automatic column profiling and encoded UTF-8 character normalization.</p>
+            </div>
+
+            <div class="etl-step-card">
+              <div class="step-badge">Step 2</div>
+              <h4>Data Cleaning & Type Casting</h4>
+              <p>Parsed order dates into standard ISO datetime. Removed 12 duplicate records. Cast currency columns to decimal fixed precision for floating point accuracy.</p>
+            </div>
+
+            <div class="etl-step-card">
+              <div class="step-badge">Step 3</div>
+              <h4>Data Privacy & Masking (GDPR/Compliance)</h4>
+              <p>Anonymized customer contact and sensitive identifiers using SHA-256 key hashing while retaining demographic segmentation for BI reporting.</p>
+            </div>
+
+            <div class="etl-step-card">
+              <div class="step-badge">Step 4</div>
+              <h4>Star Schema Dimensional Modeling</h4>
+              <p>Decomposed denormalized flat data into 1 Fact table and 4 Normalized Dimension tables with surrogate integer keys for high-performance VertiPaq engine compression.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal 2: What-If Scenario Parameter Simulator -->
+    <div class="modal-overlay" id="whatIfModal">
+      <div class="modal-card modal-md">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <div class="pbi-icon-circle whatif-circle">
+              <i data-lucide="sliders"></i>
+            </div>
+            <div>
+              <h3>What-If Profitability Parameter Analysis</h3>
+              <p>Simulate the financial impact of price changes, discount caps, and cost fluctuations</p>
+            </div>
+          </div>
+          <button class="modal-close" id="btnCloseWhatIfModal">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          
+          <div class="simulator-controls">
+            
+            <!-- Slider 1: Price Change -->
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Average Selling Price (ASP) Adjustment</span>
+                <span class="slider-val" id="valPriceDelta">+0%</span>
+              </div>
+              <input type="range" id="sliderPrice" min="-20" max="30" value="0" step="1" />
+              <div class="slider-ticks">
+                <span>-20%</span>
+                <span>0% (Baseline)</span>
+                <span>+30%</span>
+              </div>
+            </div>
+
+            <!-- Slider 2: Discount Modification -->
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Discount Optimization Delta</span>
+                <span class="slider-val" id="valDiscountDelta">0%</span>
+              </div>
+              <input type="range" id="sliderDiscount" min="-15" max="15" value="0" step="1" />
+              <div class="slider-ticks">
+                <span>-15% (Strict)</span>
+                <span>0% (Current)</span>
+                <span>+15% (Aggressive)</span>
+              </div>
+            </div>
+
+            <!-- Slider 3: Volume Elasticity -->
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Unit Sales Volume Change</span>
+                <span class="slider-val" id="valVolumeDelta">+0%</span>
+              </div>
+              <input type="range" id="sliderVolume" min="-25" max="50" value="0" step="5" />
+              <div class="slider-ticks">
+                <span>-25%</span>
+                <span>0%</span>
+                <span>+50%</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Impact Comparison Cards -->
+          <div class="whatif-results-grid">
+            <div class="result-box">
+              <span class="res-title">Projected Sales</span>
+              <span class="res-val" id="simSales">$0</span>
+              <span class="res-delta positive" id="simSalesDelta">+$0 (+0.0%)</span>
+            </div>
+
+            <div class="result-box">
+              <span class="res-title">Projected Profit</span>
+              <span class="res-val" id="simProfit">$0</span>
+              <span class="res-delta positive" id="simProfitDelta">+$0 (+0.0%)</span>
+            </div>
+
+            <div class="result-box">
+              <span class="res-title">New Profit Margin</span>
+              <span class="res-val" id="simMargin">0.0%</span>
+              <span class="res-delta neutral" id="simMarginDelta">0.0% vs Base</span>
+            </div>
+          </div>
+
+          <div class="modal-footer-actions">
+            <button class="btn btn-glass" id="btnResetSimulation">Reset to Baseline</button>
+            <button class="btn btn-primary" id="btnApplySimulation">Apply to Active View</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Retail Sales Performance Dashboard</span>
+        <span class="sep">•</span>
+        <span>Built with Modern BI Architecture & DAX Analytics</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/Adityakasara/Retail_DashBoard" target="_blank" rel="noopener noreferrer">
+          <i data-lucide="github"></i> Adityakasara/Retail_DashBoard
+        </a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
