@@ -1,76 +1,62 @@
 /* ==============================================================================
-   DAX MEASURES LIBRARY - INDIA RETAIL SALES PERFORMANCE DASHBOARD
-   Dataset: Fact_Retail_Orders, Dim_Customer, Dim_Product, Dim_Geography, Dim_Fiscal_Calendar
+   RELIANCE RETAIL LIMITED - DAX MEASURES LIBRARY (POWER BI)
+   Star Schema: Fact_Reliance_Sales, Dim_Store_Format, Dim_Geography, Dim_Fiscal_Calendar
    ============================================================================== */
 
--- 1. CORE REVENUE MEASURE
-[Total Sales INR] = 
-SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )
+-- 1. TOTAL GROSS INVOICED REVENUE (INR)
+[Gross Revenue INR] = 
+SUM ( 'Fact_Reliance_Sales'[Gross_Invoiced_Sales] )
 
--- 2. TOTAL REALIZED GROSS PROFIT
+-- 2. NET REALIZED OPERATING PROFIT
 [Net Realized Profit] = 
-SUM ( 'Fact_Retail_Orders'[Net_Profit_Amount] )
+SUM ( 'Fact_Reliance_Sales'[Net_Profit_Amount] )
 
--- 3. BLENDED PROFIT MARGIN %
+-- 3. REALIZED PROFIT MARGIN %
 [Profit Margin %] = 
 DIVIDE ( 
     [Net Realized Profit], 
-    [Total Sales INR], 
+    [Gross Revenue INR], 
     0 
 )
 
--- 4. TOTAL UNIQUE ORDERS
-[Total Orders] = 
-DISTINCTCOUNT ( 'Fact_Retail_Orders'[Invoice_ID] )
+-- 4. TOTAL UNIQUE INVOICED TRANSACTIONS
+[Total Invoiced Orders] = 
+DISTINCTCOUNT ( 'Fact_Reliance_Sales'[Invoice_ID] )
 
--- 5. AVERAGE ORDER VALUE (AOV)
+-- 5. AVERAGE BASKET VALUE / AOV
 [Average Order Value] = 
 DIVIDE ( 
-    [Total Sales INR], 
-    [Total Orders], 
+    [Gross Revenue INR], 
+    [Total Invoiced Orders], 
     0 
 )
 
 -- 6. TOTAL UNITS DISPATCHED
-[Total Units Sold] = 
-SUM ( 'Fact_Retail_Orders'[Quantity] )
+[Total Units Dispatched] = 
+SUM ( 'Fact_Reliance_Sales'[Quantity] )
 
--- 7. PRIOR YEAR SALES (TIME INTELLIGENCE)
+-- 7. SAME-PERIOD-LAST-YEAR SALES (TIME INTELLIGENCE)
 [Sales SPLY] = 
 CALCULATE ( 
-    [Total Sales INR], 
+    [Gross Revenue INR], 
     SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
 )
 
--- 8. YEAR-OVER-YEAR SALES GROWTH %
+-- 8. YEAR-OVER-YEAR REVENUE EXPANSION RATE %
 [YoY Sales Growth %] = 
-VAR CurrentSales = [Total Sales INR]
+VAR CurrentSales = [Gross Revenue INR]
 VAR PriorYearSales = [Sales SPLY]
 RETURN
     DIVIDE ( CurrentSales - PriorYearSales, PriorYearSales, 0 )
 
--- 9. PRIOR YEAR PROFIT
-[Profit SPLY] = 
-CALCULATE ( 
-    [Net Realized Profit], 
-    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
-)
-
--- 10. YEAR-OVER-YEAR PROFIT GROWTH %
-[YoY Profit Growth %] = 
-VAR CurrentProfit = [Net Realized Profit]
-VAR PriorProfit = [Profit SPLY]
-RETURN
-    DIVIDE ( CurrentProfit - PriorProfit, PriorProfit, 0 )
-
--- 11. TOTAL GST OUTPUT LIABILITY
+-- 9. TOTAL OUTPUT GST TAX COLLECTED
 [GST Output Collected] = 
-SUM ( 'Fact_Retail_Orders'[GST_Amount] )
+SUM ( 'Fact_Reliance_Sales'[GST_Amount] )
 
--- 12. UPI PENETRATION SHARE %
-[UPI Payment Share %] = 
+-- 10. JIOMART OMNI-CHANNEL REVENUE SHARE
+[JioMart Omni Share %] = 
 DIVIDE (
-    CALCULATE ( [Total Orders], 'Fact_Retail_Orders'[Payment_Mode] = "UPI / QR" ),
-    [Total Orders],
+    CALCULATE ( [Gross Revenue INR], 'Dim_Store_Format'[Format_Name] = "JioMart Omni" ),
+    [Gross Revenue INR],
     0
 )

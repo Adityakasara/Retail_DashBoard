@@ -1,16 +1,16 @@
-Invoice ID,Order Date,Financial Year,Customer Name,Zone,City,Category,Product Name,Quantity,Sales INR,GST INR,Profit INR,Profit Margin %,Payment Mode
-INV-IN-2025-0001,2025-08-14,FY 25-26,Rajesh Sharma,West,Mumbai,Electronics & Appliances,Samsung Galaxy S24 Ultra,1,119999,21599,26399,22.0,UPI / QR
-INV-IN-2025-0002,2025-07-22,FY 25-26,Ananya Iyer,South,Bengaluru,Home & Living,Solid Sheesham Dining Table Set,1,34999,6299,9799,28.0,UPI / QR
-INV-IN-2025-0003,2025-06-18,FY 25-26,Vikram Patel,West,Ahmedabad,Electronics & Appliances,Apple MacBook Air M3,1,114900,20682,19533,17.0,Credit / Debit Card
-INV-IN-2025-0004,2025-05-11,FY 25-26,Pooja Deshmukh,West,Pune,Fashion & Apparel,Fabindia Handcrafted Silk Saree,1,8990,1078,4315,48.0,UPI / QR
-INV-IN-2025-0005,2025-04-29,FY 25-26,Rohan Gupta,North,New Delhi,FMCG & Groceries,Daawat Basmati Rice (5kg),3,1497,74,209,14.0,Cash on Delivery
-INV-IN-2024-0006,2024-11-15,FY 24-25,Sneha Mukherjee,East,Kolkata,Electronics & Appliances,Sony Bravia 55" 4K Google TV,1,62990,17637,15117,24.0,UPI / QR
-INV-IN-2024-0007,2024-10-20,FY 24-25,Amit Verma,North,Lucknow,Home & Living,Green Soul Ergonomic Chair,1,11990,2158,3597,30.0,Credit / Debit Card
-INV-IN-2024-0008,2024-09-05,FY 24-25,Neha Agarwal,South,Hyderabad,Electronics & Appliances,OnePlus 12 5G (16GB),1,64999,11699,12999,20.0,UPI / QR
-INV-IN-2024-0009,2024-08-12,FY 24-25,Karthik Raman,South,Chennai,Fashion & Apparel,Manyavar Silk Kurta Set,1,4999,599,2249,45.0,UPI / QR
-INV-IN-2024-0010,2024-07-01,FY 24-25,Priya Nair,South,Kochi,FMCG & Groceries,Fortune Sunlite Refined Oil (5L),2,1370,68,164,12.0,UPI / QR
-INV-IN-2023-0011,2023-12-19,FY 23-24,Aditya Kasara,West,Mumbai,Electronics & Appliances,Voltas 1.5 Ton Split AC,1,38490,10777,8467,22.0,Credit / Debit Card
-INV-IN-2023-0012,2023-10-10,FY 23-24,Sunita Joshi,North,Jaipur,Home & Living,Wakefit Orthopedic Mattress,1,14499,2609,5074,35.0,UPI / QR
-INV-IN-2023-0013,2023-08-25,FY 23-24,Rahul Mehra,North,Chandigarh,Fashion & Apparel,Levi's 511 Slim Fit Jeans,1,3199,383,1215,38.0,Cash on Delivery
-INV-IN-2023-0014,2023-06-14,FY 23-24,Suresh Reddy,South,Bengaluru,FMCG & Groceries,Aashirvaad Chakki Atta (10kg),2,1080,54,162,15.0,UPI / QR
-INV-IN-2023-0015,2023-05-02,FY 23-24,Divya Pillai,East,Bhubaneswar,Electronics & Appliances,boAt Aavante Soundbar,1,7999,1439,2559,32.0,UPI / QR
+Invoice ID,Order Date,Financial Year,Customer Name,Operational Zone,City Cluster,Retail Format,Product Description,Quantity,Gross Sales INR,GST Tax INR,Net Profit INR,Profit Margin %,Payment Mode
+RR-INV-2025-0001,2025-08-14,FY 25-26,Rajesh Sharma,West,Mumbai Hub,Reliance Digital,Samsung Galaxy S24 Ultra 5G,1,119999,21599,26399,22.0,UPI / QR
+RR-INV-2025-0002,2025-07-22,FY 25-26,Ananya Iyer,South,Bengaluru Hub,Reliance Trends,Avaasa Embroidered Anarkali Kurta,1,2199,263,1011,46.0,UPI / QR
+RR-INV-2025-0003,2025-06-18,FY 25-26,Vikram Patel,West,Ahmedabad,Reliance Digital,Apple MacBook Air M3,1,114900,20682,19533,17.0,Credit / Debit Card
+RR-INV-2025-0004,2025-05-11,FY 25-26,Pooja Deshmukh,West,Pune Metro,Reliance Trends,DNMX Men Stretchable Slim Jeans,1,1899,227,797,42.0,UPI / QR
+RR-INV-2025-0005,2025-04-29,FY 25-26,Rohan Gupta,North,Delhi NCR Hub,Smart Bazaar,Good Life Premium Basmati Rice (5kg),3,1455,72,232,16.0,Cash on Delivery
+RR-INV-2024-0006,2024-11-15,FY 24-25,Sneha Mukherjee,East,Kolkata Hub,Reliance Digital,Sony Bravia 55" 4K Google TV,1,62990,17637,15117,24.0,UPI / QR
+RR-INV-2024-0007,2024-10-20,FY 24-25,Amit Verma,North,Lucknow,JioMart Omni,Nutraj California Almonds & Cashews (1kg),2,2398,287,671,28.0,Credit / Debit Card
+RR-INV-2024-0008,2024-09-05,FY 24-25,Neha Agarwal,South,Hyderabad Metro,Reliance Digital,Apple iPhone 15 Pro (256GB),1,129900,23382,23382,18.0,UPI / QR
+RR-INV-2024-0009,2024-08-12,FY 24-25,Karthik Raman,South,Chennai,Reliance Trends,Netplay Men Slim Fit Formal Shirt,2,2998,359,1319,44.0,UPI / QR
+RR-INV-2024-0010,2024-07-01,FY 24-25,Priya Nair,South,Kochi,Smart Bazaar,Fortune Sunlite Refined Oil (5L),2,1370,68,164,12.0,UPI / QR
+RR-INV-2023-0011,2023-12-19,FY 23-24,Aditya Kasara,West,Mumbai Hub,Reliance Digital,Voltas 1.5 Ton Split AC,1,38490,10777,8467,22.0,Credit / Debit Card
+RR-INV-2023-0012,2023-10-10,FY 23-24,Sunita Joshi,North,Jaipur,JioMart Omni,Surf Excel Matic Liquid Detergent (4L),1,820,147,196,24.0,UPI / QR
+RR-INV-2023-0013,2023-08-25,FY 23-24,Rahul Mehra,North,Chandigarh,Reliance Trends,Performax Sports Shoes,1,1699,203,764,45.0,Cash on Delivery
+RR-INV-2023-0014,2023-06-14,FY 23-24,Suresh Reddy,South,Bengaluru Hub,Smart Bazaar,Aashirvaad Shudh Chakki Atta (10kg),2,1080,54,162,15.0,UPI / QR
+RR-INV-2023-0015,2023-05-02,FY 23-24,Divya Pillai,East,Bhubaneswar,Reliance Digital,JioFiber Home Gateway Router Pro,1,2999,539,1049,35.0,UPI / QR

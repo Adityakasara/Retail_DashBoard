@@ -1,6 +1,7 @@
 /**
- * Power BI Interactive Report Engine (JavaScript)
- * Real-time DAX calculations, interactive slicers, and Chart.js visuals in Indian Rupee (INR ₹)
+ * Reliance Retail Limited - Executive Power BI Analytical Engine
+ * Multi-format Analysis: Reliance Digital, Reliance Trends, Smart Bazaar, and JioMart
+ * Currency: Indian Rupee (INR ₹)
  */
 
 const state = {
@@ -8,8 +9,8 @@ const state = {
   filteredOrders: [],
   filters: {
     year: 'ALL',
+    format: 'ALL',
     zone: 'ALL',
-    category: 'ALL',
     payment: 'ALL',
     search: ''
   },
@@ -21,39 +22,40 @@ const state = {
   charts: {}
 };
 
-// 1. Data Generation
-function generateData() {
+// 1. Reliance Retail Data Generation
+function generateRelianceData() {
   const zones = {
-    North: ['New Delhi', 'Gurugram', 'Noida', 'Lucknow', 'Jaipur', 'Chandigarh'],
-    South: ['Bengaluru', 'Hyderabad', 'Chennai', 'Kochi', 'Coimbatore'],
-    West: ['Mumbai', 'Pune', 'Ahmedabad', 'Surat', 'Nagpur'],
-    East: ['Kolkata', 'Bhubaneswar', 'Patna', 'Guwahati']
+    West: ['Mumbai Hub', 'Pune Metro', 'Ahmedabad', 'Surat', 'Nagpur'],
+    South: ['Bengaluru Hub', 'Hyderabad Metro', 'Chennai', 'Kochi', 'Coimbatore'],
+    North: ['Delhi NCR Hub', 'Gurugram', 'Noida', 'Lucknow', 'Jaipur', 'Chandigarh'],
+    East: ['Kolkata Hub', 'Bhubaneswar', 'Patna', 'Guwahati']
   };
 
-  const catalog = {
-    'Electronics & Appliances': [
-      { name: 'Samsung Galaxy S24 Ultra', price: 119999, margin: 0.22, gst: 0.18 },
-      { name: 'OnePlus 12 5G (16GB)', price: 64999, margin: 0.20, gst: 0.18 },
+  const formats = {
+    'Reliance Digital': [
+      { name: 'Samsung Galaxy S24 Ultra 5G', price: 119999, margin: 0.22, gst: 0.18 },
+      { name: 'Apple iPhone 15 Pro (256GB)', price: 129900, margin: 0.18, gst: 0.18 },
       { name: 'Sony Bravia 55" 4K Google TV', price: 62990, margin: 0.24, gst: 0.28 },
       { name: 'Apple MacBook Air M3', price: 114900, margin: 0.17, gst: 0.18 },
-      { name: 'Voltas 1.5 Ton Split AC', price: 38490, margin: 0.22, gst: 0.28 },
-      { name: 'boAt Aavante Soundbar', price: 7999, margin: 0.32, gst: 0.18 }
+      { name: 'Voltas 1.5 Ton Inverter Split AC', price: 38490, margin: 0.22, gst: 0.28 },
+      { name: 'JioFiber Home Gateway Router Pro', price: 2999, margin: 0.35, gst: 0.18 }
     ],
-    'Home & Living': [
-      { name: 'Solid Sheesham Dining Table Set', price: 34999, margin: 0.28, gst: 0.18 },
-      { name: 'Green Soul Ergonomic Chair', price: 11990, margin: 0.30, gst: 0.18 },
-      { name: 'Wakefit Orthopedic Mattress', price: 14499, margin: 0.35, gst: 0.18 }
+    'Reliance Trends': [
+      { name: 'Avaasa Embroidered Anarkali Kurta', price: 2199, margin: 0.46, gst: 0.12 },
+      { name: 'Netplay Men Slim Fit Formal Shirt', price: 1499, margin: 0.44, gst: 0.12 },
+      { name: 'DNMX Men Stretchable Slim Jeans', price: 1899, margin: 0.42, gst: 0.12 },
+      { name: 'Performax Lightweight Sports Shoes', price: 1699, margin: 0.45, gst: 0.12 }
     ],
-    'FMCG & Groceries': [
-      { name: 'Daawat Basmati Rice (5kg)', price: 499, margin: 0.14, gst: 0.05 },
+    'Smart Bazaar': [
+      { name: 'Good Life Premium Basmati Rice (5kg)', price: 485, margin: 0.16, gst: 0.05 },
       { name: 'Fortune Sunlite Refined Oil (5L)', price: 685, margin: 0.12, gst: 0.05 },
-      { name: 'Aashirvaad Chakki Atta (10kg)', price: 540, margin: 0.15, gst: 0.05 },
-      { name: 'Tata Tea Gold (1kg)', price: 520, margin: 0.22, gst: 0.05 }
+      { name: 'Aashirvaad Shudh Chakki Atta (10kg)', price: 540, margin: 0.15, gst: 0.05 },
+      { name: 'Tata Tea Gold Premium Blend (1kg)', price: 520, margin: 0.22, gst: 0.05 }
     ],
-    'Fashion & Apparel': [
-      { name: 'Manyavar Silk Kurta Set', price: 4999, margin: 0.45, gst: 0.12 },
-      { name: 'Biba Pure Cotton Kurti', price: 2799, margin: 0.44, gst: 0.12 },
-      { name: "Levi's 511 Slim Fit Jeans", price: 3199, margin: 0.38, gst: 0.12 }
+    'JioMart Omni': [
+      { name: 'Nutraj California Almonds & Cashews (1kg)', price: 1199, margin: 0.28, gst: 0.12 },
+      { name: 'Surf Excel Matic Liquid Detergent (4L)', price: 820, margin: 0.24, gst: 0.18 },
+      { name: 'Dettol Antiseptic Liquid (1L)', price: 345, margin: 0.20, gst: 0.12 }
     ]
   };
 
@@ -68,14 +70,14 @@ function generateData() {
   const years = ['FY 25-26', 'FY 24-25', 'FY 23-24'];
 
   const orders = [];
-  for (let i = 1; i <= 1200; i++) {
+  for (let i = 1; i <= 1250; i++) {
     const zoneKeys = Object.keys(zones);
     const zone = zoneKeys[Math.floor(Math.random() * zoneKeys.length)];
     const city = zones[zone][Math.floor(Math.random() * zones[zone].length)];
 
-    const catKeys = Object.keys(catalog);
-    const category = catKeys[Math.floor(Math.random() * catKeys.length)];
-    const product = catalog[category][Math.floor(Math.random() * catalog[category].length)];
+    const formatKeys = Object.keys(formats);
+    const format = formatKeys[Math.floor(Math.random() * formatKeys.length)];
+    const product = formats[format][Math.floor(Math.random() * formats[format].length)];
 
     const customer = customers[Math.floor(Math.random() * customers.length)];
     const payment = payments[Math.floor(Math.random() * payments.length)];
@@ -86,8 +88,8 @@ function generateData() {
     const day = Math.floor(Math.random() * 28) + 1;
     const dateStr = `${yearNum}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-    const quantity = category === 'FMCG & Groceries' ? Math.floor(Math.random() * 3) + 1 : 1;
-    const discount = Math.random() > 0.7 ? 0.1 : 0;
+    const quantity = (format === 'Smart Bazaar' || format === 'JioMart Omni') ? Math.floor(Math.random() * 3) + 1 : 1;
+    const discount = Math.random() > 0.65 ? 0.08 : 0;
     
     const grossSales = product.price * quantity;
     const netSales = Math.round(grossSales * (1 - discount));
@@ -99,7 +101,7 @@ function generateData() {
 
     orders.push({
       id: i,
-      invoiceId: `INV-IN-${yearNum}-${String(10000 + i).slice(1)}`,
+      invoiceId: `RR-INV-${yearNum}-${String(10000 + i).slice(1)}`,
       orderDate: dateStr,
       year: fy,
       yearNum,
@@ -107,7 +109,7 @@ function generateData() {
       customerName: customer,
       zone,
       city,
-      category,
+      format,
       productName: product.name,
       quantity,
       sales: netSales,
@@ -138,33 +140,33 @@ function formatINR(val, compact = false) {
   }).format(val);
 }
 
-// 3. DAX & Slicers Pipeline
+// 3. DAX Pipeline & Slicers
 function applySlicers() {
-  const { year, zone, category, payment, search } = state.filters;
+  const { year, format, zone, payment, search } = state.filters;
   const searchLower = search.trim().toLowerCase();
 
   state.filteredOrders = state.rawOrders.filter(o => {
     if (year !== 'ALL' && o.year !== year) return false;
+    if (format !== 'ALL' && o.format !== format) return false;
     if (zone !== 'ALL' && o.zone !== zone) return false;
-    if (category !== 'ALL' && o.category !== category) return false;
     if (payment !== 'ALL' && o.paymentMode !== payment) return false;
     if (searchLower) {
       const m = o.invoiceId.toLowerCase().includes(searchLower) ||
                 o.customerName.toLowerCase().includes(searchLower) ||
                 o.city.toLowerCase().includes(searchLower) ||
+                o.format.toLowerCase().includes(searchLower) ||
                 o.productName.toLowerCase().includes(searchLower);
       if (!m) return false;
     }
     return true;
   });
 
-  // Breadcrumb
   const bEl = document.getElementById('activeFilterBadge');
   if (bEl) {
     const yT = year === 'ALL' ? 'All Financial Years' : year;
-    const zT = zone === 'ALL' ? 'All India' : `${zone} Zone`;
-    const cT = category === 'ALL' ? 'All Categories' : category.split(' ')[0];
-    bEl.textContent = `Filter: ${yT} • ${zT} • ${cT}`;
+    const fT = format === 'ALL' ? 'All Formats' : format;
+    const zT = zone === 'ALL' ? 'National' : `${zone} Hub`;
+    bEl.textContent = `Filter: ${yT} • ${fT} • ${zT}`;
   }
 
   computeScorecard();
@@ -190,8 +192,8 @@ function computeScorecard() {
   const marginPct = totalSales > 0 ? (totalProfit / totalSales) * 100 : 0;
   const aov = totalOrders > 0 ? totalSales / totalOrders : 0;
 
-  const pySales = totalSales * 0.859;
-  const pyProfit = totalProfit * 0.822;
+  const pySales = totalSales * 0.844;
+  const pyProfit = totalProfit * 0.812;
   const sGrowth = pySales > 0 ? ((totalSales - pySales) / pySales) * 100 : 0;
   const pGrowth = pyProfit > 0 ? ((totalProfit - pyProfit) / pyProfit) * 100 : 0;
 
@@ -206,24 +208,24 @@ function computeScorecard() {
 
   document.getElementById('kpiMargin').textContent = `${marginPct.toFixed(1)}%`;
   document.getElementById('kpiOrders').textContent = totalOrders.toLocaleString('en-IN');
-  document.getElementById('kpiUnits').textContent = `${totalQuantity.toLocaleString('en-IN')} Units Sold`;
+  document.getElementById('kpiUnits').textContent = `${totalQuantity.toLocaleString('en-IN')} Units Dispatched`;
   document.getElementById('kpiAov').textContent = `AOV: ${formatINR(aov)}`;
 
   const dCenter = document.getElementById('dCenterSales');
   if (dCenter) dCenter.textContent = formatINR(totalSales, true);
 }
 
-// 4. Visuals Initialization
+// 4. Charts
 function initVisuals() {
   const gridColor = 'rgba(255, 255, 255, 0.06)';
   const textColor = '#94a3b8';
 
   Chart.defaults.color = textColor;
   Chart.defaults.font.family = "'Segoe UI', sans-serif";
-  Chart.defaults.plugins.tooltip.backgroundColor = '#151c27';
+  Chart.defaults.plugins.tooltip.backgroundColor = '#121824';
   Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
   Chart.defaults.plugins.tooltip.bodyColor = '#94a3b8';
-  Chart.defaults.plugins.tooltip.borderColor = '#222d3d';
+  Chart.defaults.plugins.tooltip.borderColor = '#1e293b';
   Chart.defaults.plugins.tooltip.borderWidth = 1;
   Chart.defaults.plugins.tooltip.padding = 8;
 
@@ -246,7 +248,7 @@ function initVisuals() {
     }
   });
 
-  // Category Doughnut
+  // Store Format Doughnut
   const ctxC = document.getElementById('categoryChart').getContext('2d');
   state.charts.category = new Chart(ctxC, {
     type: 'doughnut',
@@ -262,7 +264,7 @@ function initVisuals() {
     }
   });
 
-  // Zone Bar
+  // Regional Hubs Bar
   const ctxR = document.getElementById('regionChart').getContext('2d');
   state.charts.region = new Chart(ctxR, {
     type: 'bar',
@@ -282,7 +284,7 @@ function initVisuals() {
     }
   });
 
-  // City Bar
+  // Top Metros Bar
   const ctxCity = document.getElementById('cityChart').getContext('2d');
   state.charts.city = new Chart(ctxCity, {
     type: 'bar',
@@ -326,7 +328,7 @@ function updateCharts() {
       labels,
       datasets: [
         {
-          label: 'Sales Revenue (₹)',
+          label: 'Gross Sales (₹)',
           data: keys.map(k => timeMap[k].sales),
           borderColor: '#38bdf8',
           backgroundColor: 'rgba(56, 189, 248, 0.1)',
@@ -335,7 +337,7 @@ function updateCharts() {
           borderWidth: 2
         },
         {
-          label: 'Gross Profit (₹)',
+          label: 'Net Realized Profit (₹)',
           data: keys.map(k => timeMap[k].profit),
           borderColor: '#10b981',
           backgroundColor: 'transparent',
@@ -348,15 +350,15 @@ function updateCharts() {
     state.charts.timeline.update();
   }
 
-  // Category
-  const catMap = {};
-  orders.forEach(o => { catMap[o.category] = (catMap[o.category] || 0) + o.sales; });
+  // Format Share
+  const fmtMap = {};
+  orders.forEach(o => { fmtMap[o.format] = (fmtMap[o.format] || 0) + o.sales; });
   if (state.charts.category) {
     state.charts.category.data = {
-      labels: Object.keys(catMap),
+      labels: Object.keys(fmtMap),
       datasets: [{
-        data: Object.values(catMap),
-        backgroundColor: ['#38bdf8', '#f59e0b', '#10b981', '#a855f7'],
+        data: Object.values(fmtMap),
+        backgroundColor: ['#0a3871', '#e31837', '#10b981', '#f59e0b'],
         borderWidth: 0
       }]
     };
@@ -364,13 +366,13 @@ function updateCharts() {
   }
 
   // Zone
-  const zoneMap = { North: 0, South: 0, West: 0, East: 0 };
+  const zoneMap = { West: 0, South: 0, North: 0, East: 0 };
   orders.forEach(o => { if (zoneMap[o.zone] !== undefined) zoneMap[o.zone] += o.sales; });
   if (state.charts.region) {
     state.charts.region.data = {
-      labels: ['North Zone', 'South Zone', 'West Zone', 'East Zone'],
+      labels: ['West Hub', 'South Hub', 'North Hub', 'East Hub'],
       datasets: [{
-        data: [zoneMap.North, zoneMap.South, zoneMap.West, zoneMap.East],
+        data: [zoneMap.West, zoneMap.South, zoneMap.North, zoneMap.East],
         backgroundColor: ['#38bdf8', '#10b981', '#f59e0b', '#a855f7'],
         borderRadius: 3
       }]
@@ -378,7 +380,7 @@ function updateCharts() {
     state.charts.region.update();
   }
 
-  // City
+  // Top Cities
   const cityMap = {};
   orders.forEach(o => { cityMap[o.city] = (cityMap[o.city] || 0) + o.sales; });
   const topCities = Object.keys(cityMap).map(c => ({ city: c, sales: cityMap[c] })).sort((a, b) => b.sales - a.sales).slice(0, 6);
@@ -410,7 +412,7 @@ function renderMatrixTable() {
   const pageItems = orders.slice(startIdx, startIdx + state.pagination.pageSize);
 
   if (pageItems.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; padding: 1.5rem; color: #94a3b8;">No matching order records found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; padding: 1.5rem; color: #94a3b8;">No matching transaction records found.</td></tr>`;
     countInfo.textContent = 'Showing 0 of 0 records';
     updateMatrixPager();
     return;
@@ -422,14 +424,14 @@ function renderMatrixTable() {
       <td style="font-family: var(--font-mono); color: var(--pbi-text-sub);">${o.orderDate}</td>
       <td><strong>${o.customerName}</strong></td>
       <td>${o.city} (${o.zone})</td>
-      <td>${o.category.split(' ')[0]}</td>
+      <td><span style="color: var(--pbi-yellow); font-weight:600;">${o.format}</span></td>
       <td style="max-width: 170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${o.productName}">${o.productName}</td>
       <td style="font-family: var(--font-mono); font-weight: 700;">${formatINR(o.sales)}</td>
       <td style="font-family: var(--font-mono); color: var(--pbi-text-sub);">${formatINR(o.gstAmount)}</td>
       <td style="font-family: var(--font-mono); font-weight: 700; color: ${o.profit >= 0 ? 'var(--pbi-green)' : 'var(--pbi-red)'};">${formatINR(o.profit)}</td>
       <td style="font-family: var(--font-mono); font-weight: 700;">${o.margin.toFixed(1)}%</td>
-      <td><span style="font-size: 0.7rem; background: #0a0e14; padding: 0.1rem 0.3rem; border-radius: 3px;">${o.paymentMode}</span></td>
-      <td><span class="pbi-tag ${o.margin >= 18 ? 'green' : o.margin >= 10 ? 'yellow' : 'red'}">${o.margin >= 18 ? 'High Margin' : o.margin >= 10 ? 'Normal' : 'Low'}</span></td>
+      <td><span style="font-size: 0.7rem; background: #080c12; padding: 0.1rem 0.3rem; border-radius: 3px;">${o.paymentMode}</span></td>
+      <td><span class="pbi-tag ${o.margin >= 18 ? 'green' : o.margin >= 10 ? 'yellow' : 'red'}">${o.margin >= 18 ? 'Strong Margin' : o.margin >= 10 ? 'Healthy' : 'Low'}</span></td>
     </tr>
   `).join('');
 
@@ -448,11 +450,10 @@ function updateMatrixPager() {
 
 // 6. Event Listeners
 function setupEvents() {
-  // Slicers
   const slicerMap = {
     slicerYear: 'year',
+    slicerFormat: 'format',
     slicerZone: 'zone',
-    slicerCat: 'category',
     slicerPay: 'payment'
   };
 
@@ -467,9 +468,8 @@ function setupEvents() {
     });
   });
 
-  // Clear Slicers
   document.getElementById('btnResetSlicers')?.addEventListener('click', () => {
-    state.filters = { year: 'ALL', zone: 'ALL', category: 'ALL', payment: 'ALL', search: '' };
+    state.filters = { year: 'ALL', format: 'ALL', zone: 'ALL', payment: 'ALL', search: '' };
     document.querySelectorAll('.pbi-slicer-pill').forEach(g => {
       g.querySelectorAll('.s-btn').forEach((b, i) => {
         if (i === 0) b.classList.add('active');
@@ -481,14 +481,12 @@ function setupEvents() {
     applySlicers();
   });
 
-  // Search
   document.getElementById('tableSearchInput')?.addEventListener('input', (e) => {
     state.filters.search = e.target.value;
     state.pagination.page = 1;
     applySlicers();
   });
 
-  // Pager
   document.getElementById('btnPrev')?.addEventListener('click', () => {
     if (state.pagination.page > 1) { state.pagination.page--; renderMatrixTable(); }
   });
@@ -496,7 +494,6 @@ function setupEvents() {
     if (state.pagination.page < state.pagination.totalPages) { state.pagination.page++; renderMatrixTable(); }
   });
 
-  // Modals
   const dModal = document.getElementById('daxModal');
   const wModal = document.getElementById('whatIfModal');
 
@@ -514,7 +511,6 @@ function setupEvents() {
     if (e.target === wModal) wModal.classList.remove('active');
   });
 
-  // Bottom Tabs
   document.querySelectorAll('.pbi-bottom-bar .pbi-page-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.pbi-bottom-bar .pbi-page-tab').forEach(t => t.classList.remove('active'));
@@ -529,27 +525,25 @@ function setupEvents() {
     });
   });
 
-  // CSV Export
   document.getElementById('btnExportData')?.addEventListener('click', () => {
-    const headers = ['Invoice ID', 'Order Date', 'Customer', 'City', 'Zone', 'Category', 'Product', 'Sales INR', 'GST INR', 'Profit INR', 'Margin %', 'Payment'];
+    const headers = ['Invoice ID', 'Order Date', 'Customer', 'City', 'Zone', 'Format', 'Product', 'Sales INR', 'GST INR', 'Profit INR', 'Margin %', 'Payment'];
     const rows = [headers.join(',')];
     state.filteredOrders.forEach(o => {
       rows.push([
         o.invoiceId, o.orderDate, `"${o.customerName}"`, `"${o.city}"`, o.zone,
-        `"${o.category}"`, `"${o.productName.replace(/"/g, '""')}"`, o.sales, o.gstAmount, o.profit, o.margin, `"${o.paymentMode}"`
+        `"${o.format}"`, `"${o.productName.replace(/"/g, '""')}"`, o.sales, o.gstAmount, o.profit, o.margin, `"${o.paymentMode}"`
       ].join(','));
     });
     const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Retail_Sales_Performance_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `Reliance_Retail_Sales_Performance_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   });
 
-  // What-If Sliders
   ['sliderAsp', 'sliderDisc'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', updateSim);
   });
@@ -582,7 +576,7 @@ function updateSim() {
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) window.lucide.createIcons();
 
-  state.rawOrders = generateData();
+  state.rawOrders = generateRelianceData();
   state.filteredOrders = [...state.rawOrders];
 
   initVisuals();

@@ -1,29 +1,31 @@
-# 🇮🇳 India Retail Sales & Profitability Performance Dashboard (Power BI)
+# 🏬 Reliance Retail Limited — Sales & Profitability Performance Dashboard (Power BI)
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://adityakasara.github.io/Retail_DashBoard/)
-[![Power BI](https://img.shields.io/badge/Power_BI-Enterprise%20Analytics-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://adityakasara.github.io/Retail_DashBoard/)
+[![Power BI](https://img.shields.io/badge/Power_BI-Reliance%20Analytics-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://adityakasara.github.io/Retail_DashBoard/)
+[![Entity](https://img.shields.io/badge/Entity-Reliance%20Retail%20Ltd.-0a3871?style=for-the-badge)](https://adityakasara.github.io/Retail_DashBoard/)
 [![Currency](https://img.shields.io/badge/Currency-INR%20(%E2%82%B9)-blue?style=for-the-badge)](https://adityakasara.github.io/Retail_DashBoard/)
 
-An interactive enterprise **Power BI Retail Performance Dashboard** built for pan-India retail operations across metropolitan and tier-1/2 cities. Analyzes multi-crore retail revenue, product profitability, GST slabs, regional zone trends, and UPI payment penetration.
+An enterprise **Power BI Retail Performance Dashboard** engineered for **Reliance Retail Limited** (India's largest omni-channel retail enterprise). Analyzes gross sales revenue, gross margin profitability, store format contributions, and regional growth across **Reliance Digital**, **Reliance Trends**, **Smart Bazaar**, and **JioMart Omni**.
 
 ---
 
-## 🌟 Key Highlights & Features
+## 🌟 Executive Highlights & Features
 
-- **Pan-India Retail Analytics**: Comprehensive analysis across **North, South, West, and East Zones** covering key retail hubs (Mumbai, Bengaluru, Delhi NCR, Hyderabad, Chennai, Pune, Ahmedabad, Kolkata).
+- **Enterprise Entity**: Customized specifically for **Reliance Retail Limited**, covering key retail divisions:
+  - **Reliance Digital**: 5G Smartphones, Laptops, 4K Google TVs, Inverter ACs, and Jio ecosystem products.
+  - **Reliance Trends & Ajio**: Ethnic and Western fashion lines (Avaasa, Netplay, DNMX, Performax).
+  - **Smart Bazaar & Fresh**: FMCG, staples, edible oils, and packaged foods (Good Life, Fortune, Aashirvaad).
+  - **JioMart Omni**: Hyperlocal digital grocery and quick fulfillment orders.
 - **Rupee (INR ₹) & Lakhs/Crores Engine**: Native Indian currency formatting (`₹ Lakhs` & `₹ Crores`) with standard Indian numerical grouping.
-- **DAX Measures Implementation**: Real-time evaluation of `[Total Sales INR]`, `[Net Realized Profit]`, `[Blended Profit Margin %]`, `[YoY Sales Growth %]`, `[GST Collected INR]`, and time-intelligence comparisons (`SAMEPERIODLASTYEAR`).
-- **Product & Category Mix**: Deep dive across **Electronics & 5G Appliances**, **Home & Living**, **FMCG & Groceries**, and **Ethnic & Western Fashion**.
-- **GST & Payment Channels**: Integrated GST analysis across 5%, 12%, 18%, and 28% slabs; UPI (Google Pay / PhonePe) vs Card/EMI vs COD volume split.
-- **Dimensional Slicers**: Multi-dimensional filtering by Financial Year (FY 23-24, FY 24-25, FY 25-26), Zone, Category, and Payment Method.
-- **Executive BI Visuals**:
-  - **Revenue & Profit Trajectory**: Dual-axis line & area chart with Monthly and Fiscal Quarterly granularity.
-  - **Zone Performance Matrix**: Regional sales and margin contribution by territory.
-  - **Sub-Category Profitability Matrix**: Color-coded margin classification (High >20%, Moderate 12-20%, Volume Driver <12%).
-  - **Metro City Breakdown**: Sales velocity in top Indian metros.
-  - **Payment Mode Breakdown**: UPI vs Credit/Debit Card vs Cash on Delivery.
-- **Structured GST Invoice Ledger**: Filterable, searchable transaction ledger with state tax details and one-click **Excel / CSV Export**.
-- **What-If Profitability Simulator**: Simulate pricing adjustments, discount optimization, and volume elasticity on bottom-line profits in INR.
+- **DAX Measures Implementation**: Real-time evaluation of `[Gross Revenue INR]`, `[Net Realized Profit]`, `[Profit Margin %]`, `[YoY Sales Growth %]`, `[Average Order Value]`, and time-intelligence comparisons (`SAMEPERIODLASTYEAR`).
+- **Interactive Multi-Format Slicers**: Slicing by Financial Year (FY 23-24, FY 24-25, FY 25-26), Reliance Store Formats, Regional Hubs (West, South, North, East), and Payment Channels (JioPay/UPI, Cards/EMI, COD).
+- **Core Visual Analytics Suite**:
+  - **Monthly Trajectory**: Dual-axis line & area chart tracking monthly invoiced sales vs realized net profit in INR Lakhs.
+  - **Store Format Revenue Share**: Doughnut visualization illustrating revenue split across Digital, Trends, Smart Bazaar, and JioMart.
+  - **Regional Hub Performance**: Bar chart comparing sales volume across West Hub (Mumbai/Pune), South Hub (Bengaluru/Hyderabad), North Hub (Delhi NCR), and East Hub (Kolkata).
+  - **Top Metropolitan Clusters**: Sales volume in major metropolitan clusters.
+- **Structured Transaction Ledger**: Filterable, searchable transaction matrix with state tax details and one-click **Excel / CSV Export**.
+- **What-If Margin Simulator**: Real-time scenario parameter testing for Average Selling Price (ASP) adjustments and promotional discount optimization.
 
 ---
 
@@ -38,15 +40,15 @@ An interactive enterprise **Power BI Retail Performance Dashboard** built for pa
                                    |
                                    | *
 +-----------------------+ 1      +---+-------------------+      * 1 +-----------------------+
-|     Dim_Customer      +--------+  Fact_Retail_Orders   +----------+      Dim_Product      |
-| (Customer_Key PK)     |        | (Gross Sales & Profit)|          | (Product_Key PK)      |
+|   Dim_Store_Format    +--------+  Fact_Reliance_Sales  +----------+     Dim_Geography     |
+| (Format_Key PK)       |        | (Gross Sales & Profit)|          | (City_Key PK)         |
 +-----------------------+        +---+-------------------+          +-----------------------+
                                    | *
                                    |
                                    | 1
                        +-----------+-----------+
-                       |     Dim_Geography     |
-                       | (City_Key PK)         |
+                       |     Dim_Customer      |
+                       | (Customer_Key PK)     |
                        +-----------------------+
 ```
 
@@ -54,24 +56,24 @@ An interactive enterprise **Power BI Retail Performance Dashboard** built for pa
 
 ## 🧮 Core DAX Formulas
 
-### 1. Total Gross Sales (INR)
+### 1. Total Gross Revenue (INR)
 ```dax
-Total Sales INR = 
-SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )
+Gross Revenue INR = 
+SUM ( 'Fact_Reliance_Sales'[Gross_Invoiced_Sales] )
 ```
 
 ### 2. Net Realized Profit
 ```dax
 Net Realized Profit = 
-SUM ( 'Fact_Retail_Orders'[Net_Profit_Amount] )
+SUM ( 'Fact_Reliance_Sales'[Net_Profit_Amount] )
 ```
 
-### 3. Blended Profit Margin (%)
+### 3. Realized Profit Margin (%)
 ```dax
-Blended Profit Margin % = 
+Profit Margin % = 
 DIVIDE ( 
     [Net Realized Profit], 
-    [Total Sales INR], 
+    [Gross Revenue INR], 
     0 
 )
 ```
@@ -79,25 +81,19 @@ DIVIDE (
 ### 4. Prior Financial Year Sales (Time Intelligence)
 ```dax
 Sales SPLY = 
-CALCULATE (
-    [Total Sales INR],
-    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] )
+CALCULATE ( 
+    [Gross Revenue INR], 
+    SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
 )
 ```
 
 ### 5. Year-over-Year Growth Rate
 ```dax
 YoY Sales Growth % = 
-VAR CurrentSales = [Total Sales INR]
+VAR CurrentSales = [Gross Revenue INR]
 VAR PriorYearSales = [Sales SPLY]
 RETURN
     DIVIDE ( CurrentSales - PriorYearSales, PriorYearSales, 0 )
-```
-
-### 6. GST Tax Liability
-```dax
-GST Collected INR = 
-SUM ( 'Fact_Retail_Orders'[GST_Amount] )
 ```
 
 ---
@@ -110,6 +106,6 @@ SUM ( 'Fact_Retail_Orders'[GST_Amount] )
 ---
 
 ## 💻 Tech Stack
-- **Dashboard Interface**: HTML5, Vanilla CSS3 (Power BI Fluent Design System, Glassmorphism, Responsive Grid), ES6+ JavaScript
-- **Analytics & Charts**: Chart.js 4.4, Lucide Icons
+- **Dashboard Interface**: HTML5, Vanilla CSS3 (Microsoft Power BI Native Theme), ES6+ JavaScript
+- **Analytics & Visuals**: Chart.js 4.4, Lucide Icons
 - **Deployment**: GitHub Pages CI/CD Pipeline

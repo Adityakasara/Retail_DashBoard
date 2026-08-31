@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Microsoft Power BI - Retail Sales Performance Report (INR ₹)</title>
-  <meta name="description" content="Official Power BI interactive report analyzing pan-India retail sales performance, gross profit margins, and DAX measures across FY 2023-26." />
+  <title>Reliance Retail Limited - Executive Sales & Profitability Dashboard | Power BI</title>
+  <meta name="description" content="Reliance Retail enterprise Power BI dashboard analyzing omni-channel retail performance, store formats (Digital, Trends, Smart Bazaar, JioMart), and DAX measures across India." />
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,18 +16,16 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    /* ==========================================================================
-       Microsoft Power BI Desktop / Service Interface Theme
-       ========================================================================== */
     :root {
+      --reliance-blue: #0a3871;
+      --reliance-red: #e31837;
       --pbi-yellow: #f2c811;
-      --pbi-gold: #d9a404;
-      --pbi-header-bg: #11151c;
-      --pbi-ribbon-bg: #1b222d;
-      --pbi-canvas-bg: #0b0e14;
-      --pbi-card-bg: #151c27;
-      --pbi-card-border: #222d3d;
-      --pbi-sidebar-bg: #111722;
+      --pbi-header-bg: #0c121c;
+      --pbi-ribbon-bg: #141c28;
+      --pbi-canvas-bg: #090d14;
+      --pbi-card-bg: #121824;
+      --pbi-card-border: #1e293b;
+      --pbi-sidebar-bg: #0e141f;
       --pbi-text: #ffffff;
       --pbi-text-sub: #94a3b8;
       --pbi-text-muted: #64748b;
@@ -59,29 +57,36 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      height: 48px;
+      height: 50px;
     }
 
     .pbi-app-brand {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
-    .pbi-logo {
+    .reliance-logo-box {
       display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 18px;
-      background: #000;
-      padding: 3px 5px;
-      border-radius: 3px;
-      border: 1px solid rgba(242, 200, 17, 0.4);
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, #0a3871, #062247);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 3px 8px;
+      border-radius: 4px;
     }
-    .pbi-logo span { width: 3.5px; background: var(--pbi-yellow); border-radius: 1px; }
-    .pbi-logo span:nth-child(1) { height: 6px; }
-    .pbi-logo span:nth-child(2) { height: 11px; }
-    .pbi-logo span:nth-child(3) { height: 16px; }
+    .reliance-badge-text {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+    .reliance-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--reliance-red);
+      border-radius: 50%;
+    }
 
     .pbi-title-group h1 {
       font-size: 0.92rem;
@@ -92,7 +97,7 @@
       gap: 0.5rem;
     }
 
-    .pbi-status-pill {
+    .pbi-status-badge {
       font-size: 0.68rem;
       background: rgba(16, 185, 129, 0.15);
       color: var(--pbi-green);
@@ -127,7 +132,7 @@
     .pbi-action-btn.gold:hover { background: #e0b605; }
     .pbi-action-btn i { width: 13px; height: 13px; }
 
-    /* Power BI Ribbon / Formula Bar */
+    /* DAX Formula Bar */
     .pbi-formula-bar {
       background: var(--pbi-ribbon-bg);
       border-bottom: 1px solid var(--pbi-card-border);
@@ -141,7 +146,7 @@
       font-family: var(--font-mono);
       font-weight: 700;
       color: var(--pbi-yellow);
-      background: #0a0e14;
+      background: #080c12;
       padding: 0.15rem 0.45rem;
       border-radius: 3px;
     }
@@ -155,15 +160,15 @@
     }
     .dax-measure-code strong { color: var(--pbi-blue); }
 
-    /* Main Power BI Report Container */
+    /* Main Power BI Report Layout */
     .pbi-main-layout {
       display: flex;
-      min-height: calc(100vh - 84px);
+      min-height: calc(100vh - 86px);
     }
 
-    /* Left Slicers & Filters Pane */
+    /* Left Slicers Pane */
     .pbi-filter-pane {
-      width: 260px;
+      width: 270px;
       background: var(--pbi-sidebar-bg);
       border-right: 1px solid var(--pbi-card-border);
       padding: 1rem;
@@ -207,6 +212,9 @@
       font-weight: 600;
       color: var(--pbi-text-sub);
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     .pbi-slicer-pill {
@@ -243,7 +251,7 @@
 
     .dataset-info-box {
       margin-top: auto;
-      background: #0a0e14;
+      background: #080c12;
       border: 1px solid var(--pbi-card-border);
       border-radius: 4px;
       padding: 0.75rem;
@@ -265,9 +273,9 @@
 
     /* Purpose Header Banner on Canvas */
     .canvas-title-banner {
-      background: linear-gradient(90deg, #151c27, #111620);
+      background: linear-gradient(90deg, #121926, #0e141f);
       border: 1px solid var(--pbi-card-border);
-      border-left: 4px solid var(--pbi-yellow);
+      border-left: 4px solid var(--reliance-red);
       border-radius: 6px;
       padding: 0.85rem 1.15rem;
       display: flex;
@@ -287,7 +295,7 @@
     }
     .active-breadcrumbs {
       font-size: 0.74rem;
-      background: #090d14;
+      background: #080c12;
       padding: 0.3rem 0.65rem;
       border-radius: 4px;
       border: 1px solid var(--pbi-card-border);
@@ -340,7 +348,7 @@
       border-radius: 3px;
     }
     .kpi-growth-badge.pos { background: rgba(16, 185, 129, 0.15); color: var(--pbi-green); }
-    .kpi-growth-badge.neu { background: #0c1017; color: var(--pbi-text-sub); }
+    .kpi-growth-badge.neu { background: #080c12; color: var(--pbi-text-sub); }
 
     .kpi-big-value {
       font-size: 1.85rem;
@@ -434,13 +442,13 @@
     }
 
     .search-input-field {
-      background: #0a0e14;
+      background: #080c12;
       border: 1px solid var(--pbi-card-border);
       border-radius: 4px;
       padding: 0.35rem 0.65rem;
       color: #fff;
       font-size: 0.75rem;
-      width: 240px;
+      width: 260px;
       outline: none;
     }
     .search-input-field:focus { border-color: var(--pbi-blue); }
@@ -457,7 +465,7 @@
       text-align: left;
     }
     .pbi-table th {
-      background: #0d121a;
+      background: #0a0e16;
       padding: 0.55rem 0.7rem;
       font-weight: 600;
       color: var(--pbi-text-sub);
@@ -495,7 +503,7 @@
       gap: 0.35rem;
     }
     .p-btn {
-      background: #0a0e14;
+      background: #080c12;
       border: 1px solid var(--pbi-card-border);
       color: #fff;
       padding: 0.25rem 0.55rem;
@@ -589,7 +597,7 @@
       gap: 0.85rem;
     }
     .dax-item-card {
-      background: #0d121a;
+      background: #0a0e16;
       border: 1px solid var(--pbi-card-border);
       border-radius: 4px;
       padding: 0.75rem;
@@ -599,7 +607,7 @@
     }
     .dax-item-card h4 { color: var(--pbi-blue); font-family: var(--font-mono); font-size: 0.8rem; }
     .dax-item-card pre {
-      background: #05080c;
+      background: #04060a;
       padding: 0.5rem;
       border-radius: 3px;
       font-family: var(--font-mono);
@@ -627,12 +635,13 @@
   <!-- 1. Top Power BI App Bar -->
   <header class="pbi-app-bar">
     <div class="pbi-app-brand">
-      <div class="pbi-logo">
-        <span></span><span></span><span></span>
+      <div class="reliance-logo-box">
+        <span class="reliance-badge-text">RELIANCE RETAIL</span>
+        <span class="reliance-dot"></span>
       </div>
       <div class="pbi-title-group">
         <h1>
-          Retail Sales Performance Dashboard.pbix
+          Reliance_Retail_Performance_Report.pbix
           <span class="pbi-status-badge">DirectQuery • Live</span>
         </h1>
       </div>
@@ -652,7 +661,7 @@
   <div class="pbi-formula-bar">
     <span class="dax-fx-badge">fx</span>
     <span class="dax-measure-code" id="activeDaxFormula">
-      <strong>[Total Sales INR]</strong> = SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )
+      <strong>[Total Gross Revenue INR]</strong> = SUM ( 'Fact_Reliance_Sales'[Gross_Invoiced_Sales] )
     </span>
   </div>
 
@@ -677,27 +686,27 @@
         </div>
       </div>
 
-      <!-- Zone Slicer -->
+      <!-- Retail Formats / Division Slicer -->
       <div class="slicer-group">
-        <span class="slicer-label">Zone / Territory</span>
-        <div class="pbi-slicer-pill" id="slicerZone">
-          <button class="s-btn active" data-val="ALL">All India (4 Zones)</button>
-          <button class="s-btn" data-val="North">North Zone (Delhi/UP/PB)</button>
-          <button class="s-btn" data-val="South">South Zone (BLR/HYD/CHN)</button>
-          <button class="s-btn" data-val="West">West Zone (MUM/PUN/AMD)</button>
-          <button class="s-btn" data-val="East">East Zone (KOL/PAT/BBU)</button>
+        <span class="slicer-label">Reliance Store Format</span>
+        <div class="pbi-slicer-pill" id="slicerFormat">
+          <button class="s-btn active" data-val="ALL">All Formats & Channels</button>
+          <button class="s-btn" data-val="Reliance Digital">Reliance Digital (Electronics)</button>
+          <button class="s-btn" data-val="Reliance Trends">Reliance Trends (Fashion)</button>
+          <button class="s-btn" data-val="Smart Bazaar">Smart Bazaar (Groceries/FMCG)</button>
+          <button class="s-btn" data-val="JioMart Omni">JioMart (Hyperlocal / Online)</button>
         </div>
       </div>
 
-      <!-- Category Slicer -->
+      <!-- Zone Slicer -->
       <div class="slicer-group">
-        <span class="slicer-label">Product Category</span>
-        <div class="pbi-slicer-pill" id="slicerCat">
-          <button class="s-btn active" data-val="ALL">All Categories</button>
-          <button class="s-btn" data-val="Electronics & Appliances">Electronics & Appliances</button>
-          <button class="s-btn" data-val="Home & Living">Home & Living</button>
-          <button class="s-btn" data-val="FMCG & Groceries">FMCG & Groceries</button>
-          <button class="s-btn" data-val="Fashion & Apparel">Fashion & Apparel</button>
+        <span class="slicer-label">Operational Zone</span>
+        <div class="pbi-slicer-pill" id="slicerZone">
+          <button class="s-btn active" data-val="ALL">All India (National)</button>
+          <button class="s-btn" data-val="West">West Hub (Mumbai / Pune / Surat)</button>
+          <button class="s-btn" data-val="North">North Hub (Delhi NCR / Jaipur / CHD)</button>
+          <button class="s-btn" data-val="South">South Hub (Bengaluru / HYD / CHN)</button>
+          <button class="s-btn" data-val="East">East Hub (Kolkata / Patna / BBU)</button>
         </div>
       </div>
 
@@ -706,15 +715,15 @@
         <span class="slicer-label">Payment Channel</span>
         <div class="pbi-slicer-pill" id="slicerPay">
           <button class="s-btn active" data-val="ALL">All Payment Channels</button>
-          <button class="s-btn" data-val="UPI / QR">UPI (GPay / PhonePe)</button>
-          <button class="s-btn" data-val="Credit / Debit Card">Credit / Debit Cards</button>
+          <button class="s-btn" data-val="UPI / QR">UPI (JioPay / GPay / PhonePe)</button>
+          <button class="s-btn" data-val="Credit / Debit Card">Credit / Debit Cards & EMI</button>
           <button class="s-btn" data-val="Cash on Delivery">Cash on Delivery (COD)</button>
         </div>
       </div>
 
       <div class="dataset-info-box">
-        <strong>Data Model:</strong> Star Schema<br/>
-        <strong>Fact:</strong> Fact_Retail_Orders (1,200 rows)<br/>
+        <strong>Entity:</strong> Reliance Retail Ltd.<br/>
+        <strong>Model:</strong> Star Schema (Fact_Reliance_Sales)<br/>
         <strong>Currency:</strong> Indian Rupee (INR ₹)
       </div>
     </aside>
@@ -725,11 +734,11 @@
       <!-- Canvas Header Banner -->
       <div class="canvas-title-banner">
         <div>
-          <h2>India Retail Sales & Profitability Performance</h2>
-          <p>Executive performance analysis across regional zones, product categories, and GST margins</p>
+          <h2>Reliance Retail Limited — Sales & Margin Performance</h2>
+          <p>Multi-format analytics across Reliance Digital, Trends, Smart Bazaar, and JioMart (INR ₹)</p>
         </div>
         <div class="active-breadcrumbs" id="activeFilterBadge">
-          Filter: All Financial Years • All India • All Categories
+          Filter: All Financial Years • All Formats • National
         </div>
       </div>
 
@@ -737,20 +746,20 @@
       <section class="pbi-kpi-grid">
         <div class="pbi-kpi-card kpi-c1">
           <div class="kpi-header-row">
-            <span>Total Gross Sales</span>
-            <span class="kpi-growth-badge pos" id="kpiSalesGrowth">+16.4% YoY</span>
+            <span>Gross Sales Revenue</span>
+            <span class="kpi-growth-badge pos" id="kpiSalesGrowth">+18.4% YoY</span>
           </div>
           <div class="kpi-big-value" id="kpiSales">₹0</div>
           <div class="kpi-footer-row">
             <span>Prior Year: <strong id="kpiSalesPy">₹0</strong></span>
-            <span>DAX: [Total Sales]</span>
+            <span>DAX: [Gross Revenue]</span>
           </div>
         </div>
 
         <div class="pbi-kpi-card kpi-c2">
           <div class="kpi-header-row">
-            <span>Net Gross Profit</span>
-            <span class="kpi-growth-badge pos" id="kpiProfitGrowth">+21.8% YoY</span>
+            <span>Net Gross Profit (EBIDTA)</span>
+            <span class="kpi-growth-badge pos" id="kpiProfitGrowth">+23.2% YoY</span>
           </div>
           <div class="kpi-big-value green" id="kpiProfit">₹0</div>
           <div class="kpi-footer-row">
@@ -761,36 +770,36 @@
 
         <div class="pbi-kpi-card kpi-c3">
           <div class="kpi-header-row">
-            <span>Blended Profit Margin</span>
+            <span>Realized Profit Margin %</span>
             <span class="kpi-growth-badge neu">Benchmark: 15.0%</span>
           </div>
           <div class="kpi-big-value" id="kpiMargin">0.0%</div>
           <div class="kpi-footer-row">
-            <span>Margin Status: <strong id="kpiMarginStatus">Healthy</strong></span>
+            <span>Margin Status: <strong id="kpiMarginStatus">Target Met</strong></span>
             <span>DIVIDE(Profit, Sales)</span>
           </div>
         </div>
 
         <div class="pbi-kpi-card kpi-c4">
           <div class="kpi-header-row">
-            <span>Total Orders Placed</span>
+            <span>Invoiced Orders (B2C & B2B)</span>
             <span class="kpi-growth-badge neu" id="kpiAov">AOV: ₹0</span>
           </div>
           <div class="kpi-big-value" id="kpiOrders">0</div>
           <div class="kpi-footer-row">
-            <span id="kpiUnits">0 Units Sold</span>
-            <span>DISTINCTCOUNT(Order_ID)</span>
+            <span id="kpiUnits">0 Units Dispatched</span>
+            <span>DISTINCTCOUNT(Invoice_ID)</span>
           </div>
         </div>
       </section>
 
-      <!-- Visuals Row 1: Timeline & Category Mix -->
+      <!-- Visuals Row 1: Timeline & Format Revenue Share -->
       <section class="pbi-visuals-row">
         <div class="pbi-chart-card">
           <div class="chart-head">
             <div>
-              <h3>Revenue & Gross Profit Performance Trajectory</h3>
-              <p>Monthly sales volume vs realized profit in INR (Lakhs)</p>
+              <h3>Monthly Revenue & Net Profit Trajectory</h3>
+              <p>Performance trajectory across financial quarters in INR (Lakhs)</p>
             </div>
           </div>
           <div class="chart-box">
@@ -801,27 +810,27 @@
         <div class="pbi-chart-card">
           <div class="chart-head">
             <div>
-              <h3>Category Revenue Contribution</h3>
-              <p>Sales distribution by product line</p>
+              <h3>Store Format Contribution</h3>
+              <p>Revenue share by Digital, Trends, Smart Bazaar & JioMart</p>
             </div>
           </div>
           <div class="chart-box doughnut-wrapper">
             <canvas id="categoryChart"></canvas>
             <div class="doughnut-center">
               <div class="val" id="dCenterSales">₹0</div>
-              <div class="lbl">Total Sales</div>
+              <div class="lbl">Total Revenue</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Visuals Row 2: Zone & Top Cities -->
+      <!-- Visuals Row 2: Regional Hubs & Top Metros -->
       <section class="pbi-visuals-row equal">
         <div class="pbi-chart-card">
           <div class="chart-head">
             <div>
               <h3>Zone-wise Sales Contribution</h3>
-              <p>Revenue distribution across North, South, West, and East Zones</p>
+              <p>Sales volume across West, South, North, and East retail clusters</p>
             </div>
           </div>
           <div class="chart-box">
@@ -832,8 +841,8 @@
         <div class="pbi-chart-card">
           <div class="chart-head">
             <div>
-              <h3>Top Metropolitan Cities by Volume</h3>
-              <p>Sales performance in leading retail commercial hubs</p>
+              <h3>Top Metropolitan Clusters by Sales</h3>
+              <p>Sales performance in Mumbai, Bengaluru, Delhi NCR, and Hyderabad</p>
             </div>
           </div>
           <div class="chart-box">
@@ -846,10 +855,10 @@
       <section class="pbi-matrix-card">
         <div class="matrix-toolbar">
           <div>
-            <h3>Cleaned Retail Transaction Ledger</h3>
-            <p style="font-size: 0.72rem; color: var(--pbi-text-sub);">Granular order data with calculated profit margin and GST tax amounts</p>
+            <h3>Reliance Retail Invoiced Transaction Ledger</h3>
+            <p style="font-size: 0.72rem; color: var(--pbi-text-sub);">Cleaned transaction records with GST classification, margin tiers, and payment channels</p>
           </div>
-          <input type="text" class="search-input-field" id="tableSearchInput" placeholder="Search order ID, customer, city..." />
+          <input type="text" class="search-input-field" id="tableSearchInput" placeholder="Search invoice ID, customer, city, format..." />
         </div>
 
         <div class="matrix-table-wrap">
@@ -857,17 +866,17 @@
             <thead>
               <tr>
                 <th>Invoice ID</th>
-                <th>Order Date</th>
+                <th>Date</th>
                 <th>Customer Name</th>
                 <th>City & Zone</th>
-                <th>Category</th>
+                <th>Retail Format</th>
                 <th>Product Description</th>
                 <th>Sales (₹)</th>
                 <th>GST (₹)</th>
                 <th>Profit (₹)</th>
                 <th>Margin %</th>
                 <th>Payment Mode</th>
-                <th>Margin Tier</th>
+                <th>Margin Health</th>
               </tr>
             </thead>
             <tbody id="matrixTableBody">
@@ -889,51 +898,51 @@
     </main>
   </div>
 
-  <!-- Bottom Page Tabs (Like Microsoft Power BI) -->
+  <!-- Bottom Page Tabs (Microsoft Power BI) -->
   <footer class="pbi-bottom-bar">
     <button class="pbi-page-tab active" data-page="overview"><i data-lucide="layout-dashboard"></i> Executive Overview</button>
-    <button class="pbi-page-tab" data-page="regional"><i data-lucide="map"></i> Regional Analysis</button>
-    <button class="pbi-page-tab" data-page="dax"><i data-lucide="code-2"></i> DAX Measures & Data Model</button>
+    <button class="pbi-page-tab" data-page="regional"><i data-lucide="map"></i> Regional Hubs</button>
+    <button class="pbi-page-tab" data-page="dax"><i data-lucide="code-2"></i> Reliance DAX Model</button>
   </footer>
 
   <!-- Modal: DAX Measures -->
   <div class="modal-overlay" id="daxModal">
     <div class="modal-body-pbi">
       <div class="modal-header-pbi">
-        <h3>Power BI DAX Measures & Data Model</h3>
+        <h3>Reliance Retail Limited — DAX Measures & Star Schema</h3>
         <button class="modal-close-btn" id="btnCloseDax"><i data-lucide="x"></i></button>
       </div>
       <div class="modal-content-pbi">
         <div class="dax-grid-view">
           <div class="dax-item-card">
-            <h4>[Total Sales INR]</h4>
-            <pre><code>Total Sales INR = 
-SUM ( 'Fact_Retail_Orders'[Gross_Sales_Amount] )</code></pre>
-            <p>Calculates top-line invoiced retail revenue in Indian Rupees.</p>
+            <h4>[Gross Revenue INR]</h4>
+            <pre><code>Gross Revenue INR = 
+SUM ( 'Fact_Reliance_Sales'[Gross_Invoiced_Sales] )</code></pre>
+            <p>Calculates top-line invoiced retail sales revenue across store formats.</p>
           </div>
 
           <div class="dax-item-card">
             <h4>[Net Realized Profit]</h4>
             <pre><code>Net Realized Profit = 
-SUM ( 'Fact_Retail_Orders'[Net_Profit_Amount] )</code></pre>
-            <p>Net gross profit considering manufacturing cost and discounts.</p>
+SUM ( 'Fact_Reliance_Sales'[Net_Profit_Amount] )</code></pre>
+            <p>Realized profit margin considering procurement costs and promotions.</p>
           </div>
 
           <div class="dax-item-card">
             <h4>[Profit Margin %]</h4>
             <pre><code>Profit Margin % = 
-DIVIDE ( [Net Realized Profit], [Total Sales INR], 0 )</code></pre>
-            <p>Calculates profitability percentage with safe zero handling.</p>
+DIVIDE ( [Net Realized Profit], [Gross Revenue INR], 0 )</code></pre>
+            <p>Calculates operating profit margin percentage.</p>
           </div>
 
           <div class="dax-item-card">
             <h4>[Sales SPLY]</h4>
             <pre><code>Sales SPLY = 
 CALCULATE ( 
-    [Total Sales INR], 
+    [Gross Revenue INR], 
     SAMEPERIODLASTYEAR ( 'Dim_Fiscal_Calendar'[Date] ) 
 )</code></pre>
-            <p>Shifts fiscal calendar context by 1 full year for YoY benchmarking.</p>
+            <p>Time intelligence measure evaluating prior financial year sales.</p>
           </div>
         </div>
       </div>
@@ -944,7 +953,7 @@ CALCULATE (
   <div class="modal-overlay" id="whatIfModal">
     <div class="modal-body-pbi" style="max-width: 540px;">
       <div class="modal-header-pbi">
-        <h3>What-If Profitability Parameter Simulator</h3>
+        <h3>Reliance Retail — Margin Parameter Simulator</h3>
         <button class="modal-close-btn" id="btnCloseWhatIf"><i data-lucide="x"></i></button>
       </div>
       <div class="modal-content-pbi">
@@ -965,7 +974,7 @@ CALCULATE (
             <input type="range" id="sliderDisc" min="-10" max="15" value="0" style="width: 100%; accent-color: var(--pbi-blue);" />
           </div>
 
-          <div style="background: #0d121a; padding: 0.85rem; border-radius: 4px; border: 1px solid var(--pbi-card-border); margin-top: 0.5rem;">
+          <div style="background: #080c12; padding: 0.85rem; border-radius: 4px; border: 1px solid var(--pbi-card-border); margin-top: 0.5rem;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
               <span>Projected Revenue:</span>
               <strong id="simSalesVal">₹0</strong>
