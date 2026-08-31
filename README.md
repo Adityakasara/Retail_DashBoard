@@ -5,7 +5,7 @@
 [![Entity](https://img.shields.io/badge/Entity-Reliance%20Retail%20Ltd.-0a3871?style=for-the-badge)](https://adityakasara.github.io/Retail_DashBoard/)
 [![Currency](https://img.shields.io/badge/Currency-INR%20(%E2%82%B9)-blue?style=for-the-badge)](https://adityakasara.github.io/Retail_DashBoard/)
 
-An enterprise **Power BI Retail Performance Dashboard** engineered for **Reliance Retail Limited** (India's largest omni-channel retail enterprise). Analyzes gross sales revenue, gross margin profitability, store format contributions, and regional growth across **Reliance Digital**, **Reliance Trends**, **Smart Bazaar**, and **JioMart Omni**.
+An enterprise **Power BI Retail Performance Dashboard** engineered for **Reliance Retail Limited**. Analyzes gross sales revenue, gross margin profitability, store format contributions, and regional growth across **Reliance Digital**, **Reliance Trends**, **Smart Bazaar**, and **JioMart Omni**.
 
 ---
 
@@ -16,7 +16,7 @@ An enterprise **Power BI Retail Performance Dashboard** engineered for **Relianc
   - **Reliance Trends & Ajio**: Ethnic and Western fashion lines (Avaasa, Netplay, DNMX, Performax).
   - **Smart Bazaar & Fresh**: FMCG, staples, edible oils, and packaged foods (Good Life, Fortune, Aashirvaad).
   - **JioMart Omni**: Hyperlocal digital grocery and quick fulfillment orders.
-- **Rupee (INR ₹) & Lakhs/Crores Engine**: Native Indian currency formatting (`₹ Lakhs` & `₹ Crores`) with standard Indian numerical grouping.
+- **Rupee (INR ₹) & Lakhs/Crores Engine**: Native currency formatting (`₹ Lakhs` & `₹ Crores`) with standard numerical grouping.
 - **DAX Measures Implementation**: Real-time evaluation of `[Gross Revenue INR]`, `[Net Realized Profit]`, `[Profit Margin %]`, `[YoY Sales Growth %]`, `[Average Order Value]`, and time-intelligence comparisons (`SAMEPERIODLASTYEAR`).
 - **Interactive Multi-Format Slicers**: Slicing by Financial Year (FY 23-24, FY 24-25, FY 25-26), Reliance Store Formats, Regional Hubs (West, South, North, East), and Payment Channels (JioPay/UPI, Cards/EMI, COD).
 - **Core Visual Analytics Suite**:
